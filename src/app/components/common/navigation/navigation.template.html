@@ -38,6 +38,12 @@
       <li [ngClass]="{active: activeRoute('clients')}">
         <a [routerLink]="['/clients']"><i class="fa fa-th-large"></i> <span class="nav-label">Clients</span></a>
       </li>
+      <li [ngClass]="{active: activeRoute('products')}">
+        <a [routerLink]="['/products']"><i class="fa fa-th-large"></i> <span class="nav-label">Products</span></a>
+      </li>
+      <li [ngClass]="{active: activeRoute('orders')}">
+        <a [routerLink]="['/orders']"><i class="fa fa-th-large"></i> <span class="nav-label">Orders</span></a>
+      </li>
       <li [ngClass]="{active: activeRoute('login')}">
         <a [routerLink]="['/login']"><i class="fa fa-th-large"></i> <span class="nav-label">Login example</span></a>
       </li>

@@ -5,21 +5,21 @@ import {Router, ActivatedRoute, Params} from '@angular/router';
 import { Ng2Summernote } from 'ng2-summernote/ng2-summernote';
 
 @Component({
-  selector: 'app-edit-client-component',
-  templateUrl: './edit-client.component.html'
+  selector: 'app-edit-product-component',
+  templateUrl: './edit-product.component.html'
 })
-export class EditClientComponent implements OnInit {
+export class EditProductComponent implements OnInit {
 
   id;
   name;
-  phone;
-  email;
-  status;
-  address;
-  orderHistory;
+  price;
+  quantity;
+  description;
+  category;
+  tag;
 
-  clients;
-  client;
+  products;
+  product;
 
   data: string = 'appendix';
 
@@ -55,15 +55,16 @@ export class EditClientComponent implements OnInit {
 
   ngOnInit() {
     this.id = this.route.snapshot.params['id'];
-    this.clients = this.db.list('/clients');
-    this.client = this.db.object('/clients/'+this.id).subscribe(client => {
+    this.products = this.db.list('/products');
+    this.product = this.db.object('/products/'+this.id).subscribe(product => {
 
-      this.name = client.name;
-      this.phone = client.phone;
-      this.email = client.email;
-      this.status = client.status;
-      this.address = client.address;
-      this.orderHistory = client.orderHistory;
+      this.name = product.name;
+      this.price = product.price;
+      this.quantity = product.quantity;
+      this.description = product.description;
+      this.category = product.category;
+      this.tag = product.tag;
+
     });
 
   }
@@ -75,16 +76,16 @@ export class EditClientComponent implements OnInit {
   onEditSubmit(){
     let client = {
       name: this.name,
-      phone: this.phone,
-      email: this.email,
-      status: this.status,
-      address: this.address,
-      orderHistory: this.orderHistory,
+      price: this.price,
+      quantity: this.quantity,
+      description: this.description,
+      category: this.category,
+      tag: this.tag,
     }
 
 
-    this.clients.update(this.id, client);
-    this.router.navigate(['/clients']);
+    this.products.update(this.id, client);
+    this.router.navigate(['/products']);
   }
 
 }

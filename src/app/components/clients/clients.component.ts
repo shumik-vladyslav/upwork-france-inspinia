@@ -25,6 +25,10 @@ export class ClientsComponent implements OnInit {
 
   ngOnInit() {
     //footable();
+    setTimeout(() => {
+      jQuery('.footable').footable();
+      }, 10000);
+
   }
 
   onAddSubmit(){
@@ -33,6 +37,8 @@ export class ClientsComponent implements OnInit {
       phone: this.phone,
       email: this.email,
       status: this.status,
+      address: "",
+      orderHistory: "",
     }
 
     this.clients.push(client);

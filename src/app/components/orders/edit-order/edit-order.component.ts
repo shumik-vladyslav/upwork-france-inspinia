@@ -5,21 +5,24 @@ import {Router, ActivatedRoute, Params} from '@angular/router';
 import { Ng2Summernote } from 'ng2-summernote/ng2-summernote';
 
 @Component({
-  selector: 'app-edit-client-component',
-  templateUrl: './edit-client.component.html'
+  selector: 'app-edit-order-component',
+  templateUrl: './edit-order.component.html'
 })
-export class EditClientComponent implements OnInit {
+export class EditOrderComponent implements OnInit {
 
   id;
-  name;
-  phone;
-  email;
+  orderId;
+  clientName;
   status;
-  address;
-  orderHistory;
+  paid;
+  products;
+  quantity;
+  priceMethod;
+  notes;
+  ticketNumber;
 
-  clients;
-  client;
+  orders;
+  order;
 
   data: string = 'appendix';
 
@@ -55,15 +58,18 @@ export class EditClientComponent implements OnInit {
 
   ngOnInit() {
     this.id = this.route.snapshot.params['id'];
-    this.clients = this.db.list('/clients');
-    this.client = this.db.object('/clients/'+this.id).subscribe(client => {
+    this.orders = this.db.list('/orders');
+    this.order = this.db.object('/orders/'+this.id).subscribe(order => {
 
-      this.name = client.name;
-      this.phone = client.phone;
-      this.email = client.email;
-      this.status = client.status;
-      this.address = client.address;
-      this.orderHistory = client.orderHistory;
+      this.clientName = order.clientName;
+      this.products = order.products;
+      this.quantity = order.quantity;
+      this.paid = order.paid;
+      this.priceMethod = order.priceMethod;
+      this.notes = order.notes;
+      this.ticketNumber = order.ticketNumber;
+      this.status = order.status;
+
     });
 
   }
@@ -73,18 +79,20 @@ export class EditClientComponent implements OnInit {
   }
 
   onEditSubmit(){
-    let client = {
-      name: this.name,
-      phone: this.phone,
-      email: this.email,
+    let order = {
+      clientName: this.clientName,
+      products: this.products,
+      quantity: this.quantity,
+      paid: this.paid,
+      priceMethod: this.priceMethod,
+      notes: this.notes,
+      ticketNumber: this.ticketNumber,
       status: this.status,
-      address: this.address,
-      orderHistory: this.orderHistory,
     }
 
 
-    this.clients.update(this.id, client);
-    this.router.navigate(['/clients']);
+    this.orders.update(this.id, order);
+    this.router.navigate(['/orders']);
   }
 
 }

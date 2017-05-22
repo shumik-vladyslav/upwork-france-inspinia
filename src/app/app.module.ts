@@ -18,6 +18,12 @@ import { DashboardComponent } from "./components/dashboard/dashboard.component";
 import { CashComponent } from "./components/cash/cash.component";
 import { ClientsComponent } from "./components/clients/clients.component";
 import { EditClientComponent } from "./components/clients/edit-client/edit-client.component";
+import { ProductsComponent } from "./components/products/product.component";
+import { EditProductComponent } from "./components/products/edit-product/edit-product.component";
+import { OrdersComponent } from "./components/orders/orders.component";
+import { EditOrderComponent } from "./components/orders/edit-order/edit-order.component";
+
+import { Ng2Summernote } from 'ng2-summernote/ng2-summernote';
 
 import { ChartsModule } from 'ng2-charts/ng2-charts';
 import { FlotModule } from './components/charts/flotChart';
@@ -45,13 +51,19 @@ export const firebaseConfig = {
 
 @NgModule({
   declarations: [
+    Ng2Summernote,
     AppComponent,
     SignupComponent,
     LoginUserComponent,
     DashboardComponent,
     CashComponent,
     ClientsComponent,
-    EditClientComponent
+    EditClientComponent,
+    ProductsComponent,
+    EditProductComponent,
+    OrdersComponent,
+    EditOrderComponent
+
   ],
   imports: [
     BrowserModule,

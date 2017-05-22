@@ -20,6 +20,10 @@ import { DashboardComponent } from "./components/dashboard/dashboard.component";
 import { CashComponent } from "./components/cash/cash.component";
 import { ClientsComponent } from "./components/clients/clients.component";
 import { EditClientComponent } from "./components/clients/edit-client/edit-client.component";
+import { ProductsComponent } from "./components/products/product.component";
+import { EditProductComponent } from "./components/products/edit-product/edit-product.component";
+import { OrdersComponent } from "./components/orders/orders.component";
+import { EditOrderComponent } from "./components/orders/edit-order/edit-order.component";
 
 export const ROUTES:Routes = [
   // Main redirect
@@ -51,6 +55,10 @@ export const ROUTES:Routes = [
       {path: 'starterview', component: StarterViewComponent},
       {path: 'clients', component: ClientsComponent},
       {path: 'clients/:id', component: EditClientComponent},
+      {path: 'products', component: ProductsComponent},
+      {path: 'products/:id', component: EditProductComponent},
+      {path: 'orders', component: OrdersComponent},
+      {path: 'orders/:id', component: EditOrderComponent},
     ]
   },
   {
