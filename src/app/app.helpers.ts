@@ -68,9 +68,9 @@ export function smoothlyMenu() {
 }
 
 export function footable(){
-  $(document).ready(function() {
+  $('.footable').footable();
+}
 
-    $('.footable').footable();
-
-  });
+export function summernote(){
+  $('.summernote').summernote();
 }

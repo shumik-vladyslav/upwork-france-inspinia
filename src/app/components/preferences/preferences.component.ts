@@ -1,14 +1,14 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { summernote } from '../../../app.helpers';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { Ng2Summernote } from 'ng2-summernote/ng2-summernote';
 
 @Component({
-  selector: 'app-edit-client-component',
-  templateUrl: './edit-client.component.html'
+  selector: 'preferences',
+  templateUrl: './preferences.component.html',
+  styleUrls: ['./preferences.component.css']
 })
-export class EditClientComponent implements OnInit {
+export class PreferencesComponent implements OnInit {
 
   id;
   name;
@@ -16,10 +16,11 @@ export class EditClientComponent implements OnInit {
   email;
   status;
   address;
-  orderHistory;
+  country;
+  storeName;
 
-  clients;
-  client;
+  users;
+  user;
 
   data: string = 'appendix';
 
@@ -27,17 +28,6 @@ export class EditClientComponent implements OnInit {
     data: this.data,
   }
 
-  @Input() height: number;
-  @Input() minHeight: number;
-  @Input() maxHeight: number;
-  @Input() placeholder: string;
-  @Input() focus: boolean;
-  @Input() airMode: boolean;
-  @Input() dialogsInBody: string;
-  @Input() editable: boolean;
-  @Input() disableResizeEditor: string;
-  @Input() serverImgUp: boolean;
-  @Input() config: any;
 
   /** URL for upload server images */
   @Input() hostUpload: string;
@@ -55,18 +45,17 @@ export class EditClientComponent implements OnInit {
 
   ngOnInit() {
     this.id = this.route.snapshot.params['id'];
-    this.clients = this.db.list('/clients');
-    this.client = this.db.object('/clients/'+this.id).subscribe(client => {
+    this.users = this.db.list('/users');
+    this.user = this.db.object('/users/'+this.id).subscribe(user => {
 
-      this.name = client.name;
-      this.phone = client.phone;
-      this.email = client.email;
-      this.status = client.status;
-      this.address = client.address;
-      this.orderHistory = client.orderHistory;
+      this.name = user.name;
+      this.phone = user.phone;
+      this.email = user.email;
+      this.status = user.status;
+      this.address = user.address;
+      this.country = user.country;
     });
 
-    summernote();
 
   }
 
@@ -75,17 +64,17 @@ export class EditClientComponent implements OnInit {
   }
 
   onEditSubmit(){
-    let client = {
+    let user = {
       name: this.name,
       phone: this.phone,
       email: this.email,
       status: this.status,
       address: this.address,
-      orderHistory: this.orderHistory,
+      country: this.country,
     }
 
 
-    this.clients.update(this.id, client);
+    this.users.update(this.id, user);
     this.router.navigate(['/clients']);
   }
 

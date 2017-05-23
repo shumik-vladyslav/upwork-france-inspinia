@@ -4,12 +4,13 @@ import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/databa
 import {Router} from '@angular/router';
 
 declare var jQuery:any;
+declare var $: any;
 
 @Component({
   selector: 'clients',
   templateUrl: 'clients.template.html'
 })
-export class ClientsComponent implements OnInit {
+export class ClientsComponent {
 
   name;
   phone;
@@ -23,12 +24,8 @@ export class ClientsComponent implements OnInit {
     this.clients = db.list('/clients');
   }
 
-  ngOnInit() {
-    //footable();
-    setTimeout(() => {
-      jQuery('.footable').footable();
-      }, 10000);
-
+  public ngOnInit():any {
+    footable();
   }
 
   onAddSubmit(){
