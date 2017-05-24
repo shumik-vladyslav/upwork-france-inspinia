@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import {RouterModule} from "@angular/router";
 import {LocationStrategy, HashLocationStrategy} from '@angular/common';
@@ -23,6 +23,9 @@ import { EditProductComponent } from "./components/products/edit-product/edit-pr
 import { OrdersComponent } from "./components/orders/orders.component";
 import { EditOrderComponent } from "./components/orders/edit-order/edit-order.component";
 import { PreferencesComponent } from "./components/preferences/preferences.component";
+import { ProjectsComponent } from "./components/projects/projects.component";
+import { ProfilComponent } from "./components/profil/profil.component";
+import { UserService } from "./components/shared/user.service";
 
 import { Ng2Summernote } from 'ng2-summernote/ng2-summernote';
 
@@ -64,12 +67,15 @@ export const firebaseConfig = {
     EditProductComponent,
     OrdersComponent,
     EditOrderComponent,
-    PreferencesComponent
+    PreferencesComponent,
+    ProjectsComponent,
+    ProfilComponent
 
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     DashboardsModule,
     LayoutsModule,
@@ -80,7 +86,7 @@ export const firebaseConfig = {
     AngularFireAuthModule,
     AngularFireDatabaseModule
   ],
-  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}],
+  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy},UserService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

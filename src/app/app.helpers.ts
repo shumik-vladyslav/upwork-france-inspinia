@@ -73,4 +73,5 @@ export function footable(){
 
 export function summernote(){
   $('.summernote').summernote();
+
 }

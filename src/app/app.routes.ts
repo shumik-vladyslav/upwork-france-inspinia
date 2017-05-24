@@ -25,6 +25,8 @@ import { EditProductComponent } from "./components/products/edit-product/edit-pr
 import { OrdersComponent } from "./components/orders/orders.component";
 import { EditOrderComponent } from "./components/orders/edit-order/edit-order.component";
 import { PreferencesComponent } from "./components/preferences/preferences.component";
+import { ProjectsComponent } from "./components/projects/projects.component";
+import { ProfilComponent } from "./components/profil/profil.component";
 
 export const ROUTES:Routes = [
   // Main redirect
@@ -45,6 +47,12 @@ export const ROUTES:Routes = [
     ]
   },
   {
+    path: 'preferences', component: BasicLayoutComponent,
+    children: [
+      {path: 'profil', component: ProfilComponent},
+    ]
+  },
+  {
     path: 'dashboards', component: TopNavigationLayoutComponent,
     children: [
       {path: 'dashboard41', component: Dashboard41Component}
@@ -61,6 +69,7 @@ export const ROUTES:Routes = [
       {path: 'orders', component: OrdersComponent},
       {path: 'orders/:id', component: EditOrderComponent},
       {path: 'preferences', component: PreferencesComponent},
+      {path: 'projects', component: ProjectsComponent},
     ]
   },
   {

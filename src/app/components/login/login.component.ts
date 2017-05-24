@@ -4,6 +4,7 @@ import * as firebase from 'firebase/app';
 import {AngularFireDatabase} from 'angularfire2/database';
 import { Router } from '@angular/router';
 import { Cookie } from 'ng2-cookies';
+import { UserService } from "../shared/user.service";
 
 @Component({
   selector: 'app-email',
@@ -18,7 +19,7 @@ export class LoginUserComponent implements OnInit {
   users;
 
 
-  constructor(public afAuth: AngularFireAuth, private db: AngularFireDatabase, private router: Router) {
+  constructor(public afAuth: AngularFireAuth, private db: AngularFireDatabase, private router: Router, private userService: UserService) {
     this.user = afAuth.authState;
     this.users = db.list('/users');
   }
@@ -42,6 +43,13 @@ export class LoginUserComponent implements OnInit {
                     flag = true;
                     console.log(snapshot.email, data.email, name,snapshot.name);
                     console.log("Пользователь залогинелся!");
+
+                    let userInfo = {
+                      email: snapshot.email,
+                    }
+
+                    this.userService.addUser(userInfo);
+                    console.log(userInfo,44);
                     this.router.navigate(['/starterview']);
                   } else {
                     console.log("Вы ввели неверный логин!");

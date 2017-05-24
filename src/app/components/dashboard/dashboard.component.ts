@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, } from '@angular/core';
-
+import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
 import { FlotChartDirective } from '../../components/charts/flotChart';
 
 declare var jQuery:any;
@@ -14,7 +14,8 @@ export class DashboardComponent implements OnDestroy, OnInit {
   public nav:any;
   public todos: any;
 
-  public constructor() {
+  projects: FirebaseListObservable<any[]>;
+  public constructor(public db: AngularFireDatabase) {
     this.nav = document.querySelector('nav.navbar');
     this.todos = [
       {name: "Buy a milk", completed: true},
@@ -25,6 +26,8 @@ export class DashboardComponent implements OnDestroy, OnInit {
       {name: "Create new stuff", completed: false},
       {name: "Call to Anna for dinner", completed: false},
     ];
+
+    this.projects = db.list('/projects');
   }
 
   public ngOnInit():any {

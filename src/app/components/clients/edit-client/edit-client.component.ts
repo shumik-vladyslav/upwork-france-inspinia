@@ -4,6 +4,10 @@ import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/databa
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { Ng2Summernote } from 'ng2-summernote/ng2-summernote';
 
+declare var JQuery: any;
+declare var $: any;
+declare var jQuery:any;
+
 @Component({
   selector: 'app-edit-client-component',
   templateUrl: './edit-client.component.html'
@@ -21,11 +25,12 @@ export class EditClientComponent implements OnInit {
   clients;
   client;
 
-  data: string = 'appendix';
 
-  model: any = {
-    data: this.data,
-  }
+  //data: string = 'appendix';
+
+  //model: any = {
+  //  data: this.data,
+  //}
 
   @Input() height: number;
   @Input() minHeight: number;
@@ -64,27 +69,37 @@ export class EditClientComponent implements OnInit {
       this.status = client.status;
       this.address = client.address;
       this.orderHistory = client.orderHistory;
+      //console.log(this.data);
+      var markupStr = ''+this.orderHistory;
+      $('.summernote').summernote('code', markupStr);
     });
 
+
     summernote();
+
+
+
 
   }
 
   onSubmit() {
-    this.model.data = this.data;
+    //this.model.data = this.data;
   }
 
   onEditSubmit(){
+    var markupStrIn = $('.summernote').summernote('code');
     let client = {
       name: this.name,
       phone: this.phone,
       email: this.email,
       status: this.status,
       address: this.address,
-      orderHistory: this.orderHistory,
+      orderHistory: markupStrIn,
     }
 
-
+    //this.model.data = this.data;
+    //console.log(this.model.data,44);
+    console.log(markupStrIn,44);
     this.clients.update(this.id, client);
     this.router.navigate(['/clients']);
   }
