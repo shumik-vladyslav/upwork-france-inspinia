@@ -73,7 +73,7 @@ export class DashboardComponent implements OnDestroy, OnInit {
 
           }
         ];
-      },5000)
+      },3000)
 
 
 
