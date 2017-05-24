@@ -50,7 +50,7 @@ export class LoginUserComponent implements OnInit {
 
                     this.userService.addUser(userInfo);
                     console.log(userInfo,44);
-                    this.router.navigate(['/starterview']);
+                    this.router.navigate(['/dashboards/main-view']);
                   } else {
                     console.log("Вы ввели неверный логин!");
                   }
@@ -78,7 +78,7 @@ export class LoginUserComponent implements OnInit {
   logout() {
     this.afAuth.auth.signOut();
     console.log("Пользователь вышел!")
-    this.router.navigate([ '/starterview' ]);
+    this.router.navigate([ '/dashboards/main-view' ]);
     Cookie.set("User", null);
   }
 

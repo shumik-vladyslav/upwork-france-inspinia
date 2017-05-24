@@ -34,7 +34,7 @@ export class SignupComponent implements OnInit {
             password: password,
           });
           console.log("Пользователь создан!");
-          this.router.navigate(['/starterview'])
+          this.router.navigate(['/dashboards/main-view'])
         }).catch(
         (err) => {
           this.error = err;

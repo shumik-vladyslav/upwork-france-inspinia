@@ -26,6 +26,8 @@ import { PreferencesComponent } from "./components/preferences/preferences.compo
 import { ProjectsComponent } from "./components/projects/projects.component";
 import { ProfilComponent } from "./components/profil/profil.component";
 import { UserService } from "./components/shared/user.service";
+import { PaymentComponent } from "./components/payment/payment.component";
+import { MessagesComponent } from "./components/messages/messages.component";
 
 import { Ng2Summernote } from 'ng2-summernote/ng2-summernote';
 
@@ -69,7 +71,9 @@ export const firebaseConfig = {
     EditOrderComponent,
     PreferencesComponent,
     ProjectsComponent,
-    ProfilComponent
+    ProfilComponent,
+    PaymentComponent,
+    MessagesComponent
 
   ],
   imports: [

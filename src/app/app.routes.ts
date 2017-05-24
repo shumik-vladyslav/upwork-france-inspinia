@@ -27,10 +27,12 @@ import { EditOrderComponent } from "./components/orders/edit-order/edit-order.co
 import { PreferencesComponent } from "./components/preferences/preferences.component";
 import { ProjectsComponent } from "./components/projects/projects.component";
 import { ProfilComponent } from "./components/profil/profil.component";
+import { PaymentComponent } from "./components/payment/payment.component";
+import { MessagesComponent } from "./components/messages/messages.component";
 
 export const ROUTES:Routes = [
   // Main redirect
-  {path: '', redirectTo: 'starterview', pathMatch: 'full'},
+  {path: '', redirectTo: 'dashboards/main-view', pathMatch: 'full'},
 
 
   // App views
@@ -50,6 +52,8 @@ export const ROUTES:Routes = [
     path: 'preferences', component: BasicLayoutComponent,
     children: [
       {path: 'profil', component: ProfilComponent},
+      {path: 'payment', component: PaymentComponent},
+      {path: 'messages', component: MessagesComponent},
     ]
   },
   {
@@ -81,5 +85,5 @@ export const ROUTES:Routes = [
   },
 
   // Handle all other routes
-  {path: '**',  redirectTo: 'starterview'}
+  {path: '**',  redirectTo: 'dashboards/main-view'}
 ];

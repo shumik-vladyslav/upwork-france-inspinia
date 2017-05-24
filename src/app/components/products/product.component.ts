@@ -4,6 +4,7 @@ import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/databa
 import {Router} from '@angular/router';
 
 declare var jQuery:any;
+declare var $: any;
 
 @Component({
   selector: 'products',
@@ -22,8 +23,8 @@ export class ProductsComponent implements OnInit {
     this.products = db.list('/products');
   }
 
-  ngOnInit() {
-    //footable();
+  public ngOnInit():any {
+    footable();
   }
 
   onAddSubmit(){

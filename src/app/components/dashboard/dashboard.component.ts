@@ -13,6 +13,11 @@ export class DashboardComponent implements OnDestroy, OnInit {
 
   public nav:any;
   public todos: any;
+  mainData;
+  income;
+  orders;
+  visits;
+  userActivity;
 
   projects: FirebaseListObservable<any[]>;
   public constructor(public db: AngularFireDatabase) {
@@ -28,6 +33,15 @@ export class DashboardComponent implements OnDestroy, OnInit {
     ];
 
     this.projects = db.list('/projects');
+    this.mainData = db.object('/mainData').subscribe(client => {
+
+      this.orders = client.orders;
+      this.income = client.income;
+      this.visits = client.visits;
+      this.userActivity = client.userActivity;  
+
+    });
+    console.log(this.orders,55);
   }
 
   public ngOnInit():any {
