@@ -39,6 +39,8 @@ export class OrdersComponent implements OnInit {
       priceMethod: "",
       notes: "",
       ticketNumber: "",
+      date: "2016, 12, 30",
+      orderSum: '800'
     }
 
     this.orders.push(order);

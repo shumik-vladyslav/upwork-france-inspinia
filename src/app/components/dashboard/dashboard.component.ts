@@ -18,6 +18,8 @@ export class DashboardComponent implements OnDestroy, OnInit {
   orders;
   visits;
   userActivity;
+  ordersTable;
+  infos= [];
 
   projects: FirebaseListObservable<any[]>;
   public constructor(public db: AngularFireDatabase) {
@@ -38,10 +40,45 @@ export class DashboardComponent implements OnDestroy, OnInit {
       this.orders = client.orders;
       this.income = client.income;
       this.visits = client.visits;
-      this.userActivity = client.userActivity;  
+      this.userActivity = client.userActivity;
 
     });
     console.log(this.orders,55);
+
+    this.ordersTable = db.list('/orders').subscribe(snapshots => {
+
+
+      snapshots.forEach(snapshot => {
+        let day = [];
+        let split = snapshot.date.split(',');
+        day.push(snapshot.date, 500);
+        this.infos.push([this.gd(+split[0], +split[1], +split[2]), snapshot.orderSum]);
+        console.log(snapshot.date,32);
+        console.log(day,33);
+        console.log(this.infos,34);
+      });
+
+      setTimeout(()=>{
+        this.flotDataset = [
+          {
+            label: "Number of orders",
+            data: this.infos,
+            color: "#1ab394",
+            bars: {
+              show: true,
+              align: "center",
+              barWidth: 24 * 60 * 60 * 600,
+              lineWidth: 0
+            }
+
+          }
+        ];
+      },5000)
+
+
+
+    });
+
   }
 
   public ngOnInit():any {
@@ -70,61 +107,16 @@ export class DashboardComponent implements OnDestroy, OnInit {
     [this.gd(2012, 1, 29), 5], [this.gd(2012, 1, 30), 8], [this.gd(2012, 1, 31), 25]
   ];
 
-  private data2 = [
-    [this.gd(2012, 1, 1), 800], [this.gd(2012, 1, 2), 500], [this.gd(2012, 1, 3), 600], [this.gd(2012, 1, 4), 700],
-    [this.gd(2012, 1, 5), 500], [this.gd(2012, 1, 6), 456], [this.gd(2012, 1, 7), 800], [this.gd(2012, 1, 8), 589],
-    [this.gd(2012, 1, 9), 467], [this.gd(2012, 1, 10), 876], [this.gd(2012, 1, 11), 689], [this.gd(2012, 1, 12), 700],
-    [this.gd(2012, 1, 13), 500], [this.gd(2012, 1, 14), 600], [this.gd(2012, 1, 15), 700], [this.gd(2012, 1, 16), 786],
-    [this.gd(2012, 1, 17), 345], [this.gd(2012, 1, 18), 888], [this.gd(2012, 1, 19), 888], [this.gd(2012, 1, 20), 888],
-    [this.gd(2012, 1, 21), 987], [this.gd(2012, 1, 22), 444], [this.gd(2012, 1, 23), 999], [this.gd(2012, 1, 24), 567],
-    [this.gd(2012, 1, 25), 786], [this.gd(2012, 1, 26), 666], [this.gd(2012, 1, 27), 888], [this.gd(2012, 1, 28), 900],
-    [this.gd(2012, 1, 29), 178], [this.gd(2012, 1, 30), 555], [this.gd(2012, 1, 31), 993]
-  ];
+  private data2 = this.infos;
 
 
-  public flotDataset:any = [
-    {
-      label: "Number of orders",
-      data: this.data2,
-      color: "#1ab394",
-      bars: {
-        show: true,
-        align: "center",
-        barWidth: 24 * 60 * 60 * 600,
-        lineWidth: 0
-      }
-
-    }, {
-      label: "Payments",
-      data: this.data1,
-      yaxis: 2,
-      color: "#1C84C6",
-      lines: {
-        lineWidth: 1,
-        show: true,
-        fill: true,
-        fillColor: {
-          colors: [{
-            opacity: 0.2
-          }, {
-            opacity: 0.4
-          }]
-        }
-      },
-      splines: {
-        show: false,
-        tension: 0.6,
-        lineWidth: 1,
-        fill: 0.1
-      },
-    }
-  ];
+  public flotDataset:any ;
 
   public flotOptions:any =
   {
     xaxis: {
       mode: "time",
-      tickSize: [3, "day"],
+      tickSize: [30, "day"],
       tickLength: 0,
       axisLabel: "Date",
       axisLabelUseCanvas: true,
@@ -192,6 +184,171 @@ export class DashboardComponent implements OnDestroy, OnInit {
         normalizeFunction: 'polynomial'
       }]
     },
+  }
+
+  monthSort() {
+    console.log("Sort month");
+  this.flotOptions =
+    {
+      xaxis: {
+        mode: "time",
+        tickSize: [30, "day"],
+        tickLength: 0,
+        axisLabel: "Date",
+        axisLabelUseCanvas: true,
+        axisLabelFontSizePixels: 12,
+        axisLabelFontFamily: 'Arial',
+        axisLabelPadding: 10,
+        color: "#d5d5d5"
+      },
+      yaxes: [{
+        position: "left",
+        max: 1070,
+        color: "#d5d5d5",
+        axisLabelUseCanvas: true,
+        axisLabelFontSizePixels: 12,
+        axisLabelFontFamily: 'Arial',
+        axisLabelPadding: 3
+      }, {
+        position: "right",
+        clolor: "#d5d5d5",
+        axisLabelUseCanvas: true,
+        axisLabelFontSizePixels: 12,
+        axisLabelFontFamily: ' Arial',
+        axisLabelPadding: 67
+      }
+      ],
+      legend: {
+        noColumns: 1,
+        labelBoxBorderColor: "#000000",
+        position: "nw"
+      },
+      grid: {
+        hoverable: false,
+        borderWidth: 0
+      }
+    };
+    //this.ordersTable.subscribe(snapshots => {
+    //
+    //
+    //  snapshots.forEach(snapshot => {
+    //    let day = [];
+    //    let split = snapshot.date.split(',');
+    //    day.push(snapshot.date, 500);
+    //    this.infos.push([this.gd(+split[0], +split[1], +split[2]), snapshot.orderSum]);
+    //    console.log(snapshot.date,32);
+    //    console.log(day,33);
+    //    console.log(this.infos,34);
+    //  });
+    //
+    //  setTimeout(()=>{
+    //    this.flotDataset = [
+    //      {
+    //        label: "Number of orders",
+    //        data: this.infos,
+    //        color: "#1ab394",
+    //        bars: {
+    //          show: true,
+    //          align: "center",
+    //          barWidth: 24 * 60 * 60 * 600,
+    //          lineWidth: 0
+    //        }
+    //
+    //      }
+    //    ];
+    //  },5000)
+    //
+    //
+    //
+    //});
+  }
+
+  yearsSort() {
+    console.log("Sort month");
+    this.flotOptions =
+    {
+      xaxis: {
+        mode: "time",
+        tickSize: [365, "day"],
+        tickLength: 0,
+        axisLabel: "Date",
+        axisLabelUseCanvas: true,
+        axisLabelFontSizePixels: 12,
+        axisLabelFontFamily: 'Arial',
+        axisLabelPadding: 10,
+        color: "#d5d5d5"
+      },
+      yaxes: [{
+        position: "left",
+        max: 1070,
+        color: "#d5d5d5",
+        axisLabelUseCanvas: true,
+        axisLabelFontSizePixels: 12,
+        axisLabelFontFamily: 'Arial',
+        axisLabelPadding: 3
+      }, {
+        position: "right",
+        clolor: "#d5d5d5",
+        axisLabelUseCanvas: true,
+        axisLabelFontSizePixels: 12,
+        axisLabelFontFamily: ' Arial',
+        axisLabelPadding: 67
+      }
+      ],
+      legend: {
+        noColumns: 1,
+        labelBoxBorderColor: "#000000",
+        position: "nw"
+      },
+      grid: {
+        hoverable: false,
+        borderWidth: 0
+      }
+    };
+  }
+
+  daySort() {
+    console.log("Sort month");
+    this.flotOptions =
+    {
+      xaxis: {
+        mode: "time",
+        tickSize: [3, "day"],
+        tickLength: 0,
+        axisLabel: "Date",
+        axisLabelUseCanvas: true,
+        axisLabelFontSizePixels: 12,
+        axisLabelFontFamily: 'Arial',
+        axisLabelPadding: 10,
+        color: "#d5d5d5"
+      },
+      yaxes: [{
+        position: "left",
+        max: 1070,
+        color: "#d5d5d5",
+        axisLabelUseCanvas: true,
+        axisLabelFontSizePixels: 12,
+        axisLabelFontFamily: 'Arial',
+        axisLabelPadding: 3
+      }, {
+        position: "right",
+        clolor: "#d5d5d5",
+        axisLabelUseCanvas: true,
+        axisLabelFontSizePixels: 12,
+        axisLabelFontFamily: ' Arial',
+        axisLabelPadding: 67
+      }
+      ],
+      legend: {
+        noColumns: 1,
+        labelBoxBorderColor: "#000000",
+        position: "nw"
+      },
+      grid: {
+        hoverable: false,
+        borderWidth: 0
+      }
+    };
   }
 
 }
