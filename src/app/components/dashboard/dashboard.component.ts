@@ -188,167 +188,131 @@ export class DashboardComponent implements OnDestroy, OnInit {
 
   monthSort() {
     console.log("Sort month");
-  this.flotOptions =
-    {
-      xaxis: {
-        mode: "time",
-        tickSize: [30, "day"],
-        tickLength: 0,
-        axisLabel: "Date",
-        axisLabelUseCanvas: true,
-        axisLabelFontSizePixels: 12,
-        axisLabelFontFamily: 'Arial',
-        axisLabelPadding: 10,
-        color: "#d5d5d5"
-      },
-      yaxes: [{
-        position: "left",
-        max: 1070,
-        color: "#d5d5d5",
-        axisLabelUseCanvas: true,
-        axisLabelFontSizePixels: 12,
-        axisLabelFontFamily: 'Arial',
-        axisLabelPadding: 3
-      }, {
-        position: "right",
-        clolor: "#d5d5d5",
-        axisLabelUseCanvas: true,
-        axisLabelFontSizePixels: 12,
-        axisLabelFontFamily: ' Arial',
-        axisLabelPadding: 67
-      }
-      ],
-      legend: {
-        noColumns: 1,
-        labelBoxBorderColor: "#000000",
-        position: "nw"
-      },
-      grid: {
-        hoverable: false,
-        borderWidth: 0
-      }
-    };
-    //this.ordersTable.subscribe(snapshots => {
-    //
-    //
-    //  snapshots.forEach(snapshot => {
-    //    let day = [];
-    //    let split = snapshot.date.split(',');
-    //    day.push(snapshot.date, 500);
-    //    this.infos.push([this.gd(+split[0], +split[1], +split[2]), snapshot.orderSum]);
-    //    console.log(snapshot.date,32);
-    //    console.log(day,33);
-    //    console.log(this.infos,34);
-    //  });
-    //
-    //  setTimeout(()=>{
-    //    this.flotDataset = [
-    //      {
-    //        label: "Number of orders",
-    //        data: this.infos,
-    //        color: "#1ab394",
-    //        bars: {
-    //          show: true,
-    //          align: "center",
-    //          barWidth: 24 * 60 * 60 * 600,
-    //          lineWidth: 0
-    //        }
-    //
-    //      }
-    //    ];
-    //  },5000)
-    //
-    //
-    //
-    //});
+    this.ordersTable = this.db.list('/orders').subscribe(snapshots => {
+
+      //this.infos = null;
+      this.infos.splice(1, 20);
+      snapshots.forEach(snapshot => {
+        let day = [];
+        let split = snapshot.date.split(',');
+        day.push(snapshot.date, 500);
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth() + 1;
+        console.log(currentDate,554);
+        console.log(currentMonth,555);
+        console.log(+split[1],556);
+
+
+        if(+split[1] == currentMonth) {
+          this.infos.push([this.gd(+split[0], +split[1], +split[2]), snapshot.orderSum]);
+          console.log(snapshot.date,32);
+          console.log(day,33);
+          console.log(this.infos,34);
+        }
+
+      });
+      this.flotDataset = [
+          {
+            label: "Number of orders",
+            data: this.infos,
+            color: "#1ab394",
+            bars: {
+              show: true,
+              align: "center",
+              barWidth: 24 * 60 * 60 * 600,
+              lineWidth: 0
+            }
+
+          }
+        ];
+
+    });
   }
 
   yearsSort() {
-    console.log("Sort month");
-    this.flotOptions =
-    {
-      xaxis: {
-        mode: "time",
-        tickSize: [365, "day"],
-        tickLength: 0,
-        axisLabel: "Date",
-        axisLabelUseCanvas: true,
-        axisLabelFontSizePixels: 12,
-        axisLabelFontFamily: 'Arial',
-        axisLabelPadding: 10,
-        color: "#d5d5d5"
-      },
-      yaxes: [{
-        position: "left",
-        max: 1070,
-        color: "#d5d5d5",
-        axisLabelUseCanvas: true,
-        axisLabelFontSizePixels: 12,
-        axisLabelFontFamily: 'Arial',
-        axisLabelPadding: 3
-      }, {
-        position: "right",
-        clolor: "#d5d5d5",
-        axisLabelUseCanvas: true,
-        axisLabelFontSizePixels: 12,
-        axisLabelFontFamily: ' Arial',
-        axisLabelPadding: 67
-      }
-      ],
-      legend: {
-        noColumns: 1,
-        labelBoxBorderColor: "#000000",
-        position: "nw"
-      },
-      grid: {
-        hoverable: false,
-        borderWidth: 0
-      }
-    };
+    console.log("Sort years");
+    this.ordersTable = this.db.list('/orders').subscribe(snapshots => {
+
+      //this.infos = null;
+      this.infos.splice(1, 20);
+      snapshots.forEach(snapshot => {
+        let day = [];
+        let split = snapshot.date.split(',');
+        day.push(snapshot.date, 500);
+        let currentDate = new Date();
+        let currentMonth = currentDate.getFullYear();
+        console.log(currentDate,554);
+        console.log(currentMonth,555);
+        console.log(+split[1],556);
+
+
+        if(+split[0] == currentMonth) {
+          this.infos.push([this.gd(+split[0], +split[1], +split[2]), snapshot.orderSum]);
+          console.log(snapshot.date,32);
+          console.log(day,33);
+          console.log(this.infos,34);
+        }
+
+      });
+      this.flotDataset = [
+        {
+          label: "Number of orders",
+          data: this.infos,
+          color: "#1ab394",
+          bars: {
+            show: true,
+            align: "center",
+            barWidth: 24 * 60 * 60 * 600,
+            lineWidth: 0
+          }
+
+        }
+      ];
+
+    });
   }
 
   daySort() {
-    console.log("Sort month");
-    this.flotOptions =
-    {
-      xaxis: {
-        mode: "time",
-        tickSize: [3, "day"],
-        tickLength: 0,
-        axisLabel: "Date",
-        axisLabelUseCanvas: true,
-        axisLabelFontSizePixels: 12,
-        axisLabelFontFamily: 'Arial',
-        axisLabelPadding: 10,
-        color: "#d5d5d5"
-      },
-      yaxes: [{
-        position: "left",
-        max: 1070,
-        color: "#d5d5d5",
-        axisLabelUseCanvas: true,
-        axisLabelFontSizePixels: 12,
-        axisLabelFontFamily: 'Arial',
-        axisLabelPadding: 3
-      }, {
-        position: "right",
-        clolor: "#d5d5d5",
-        axisLabelUseCanvas: true,
-        axisLabelFontSizePixels: 12,
-        axisLabelFontFamily: ' Arial',
-        axisLabelPadding: 67
-      }
-      ],
-      legend: {
-        noColumns: 1,
-        labelBoxBorderColor: "#000000",
-        position: "nw"
-      },
-      grid: {
-        hoverable: false,
-        borderWidth: 0
-      }
-    };
+    console.log("Sort day");
+    this.ordersTable = this.db.list('/orders').subscribe(snapshots => {
+
+      //this.infos = null;
+      this.infos.splice(1, 20);
+      snapshots.forEach(snapshot => {
+        let day = [];
+        let split = snapshot.date.split(',');
+        day.push(snapshot.date, 500);
+        let currentDate = new Date();
+        let currentMonth = currentDate.getDate();
+        console.log(currentDate,554);
+        console.log(currentMonth,555);
+        console.log(+split[2],556);
+
+
+        if(+split[2] == currentMonth) {
+          this.infos.push([this.gd(+split[0], +split[1], +split[2]), snapshot.orderSum]);
+          console.log(snapshot.date,32);
+          console.log(day,33);
+          console.log(this.infos,34);
+        }
+
+      });
+      this.flotDataset = [
+        {
+          label: "Number of orders",
+          data: this.infos,
+          color: "#1ab394",
+          bars: {
+            show: true,
+            align: "center",
+            barWidth: 24 * 60 * 60 * 600,
+            lineWidth: 0
+          }
+
+        }
+      ];
+
+    });
   }
 
 }
