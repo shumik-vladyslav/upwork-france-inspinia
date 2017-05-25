@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import {Router} from '@angular/router';
+import { AngularFireAuth } from 'angularfire2/auth';
+import * as firebase from 'firebase/app';
+import { Cookie } from 'ng2-cookies';
 import 'jquery-slimscroll';
 
 declare var jQuery:any;
@@ -11,7 +14,7 @@ declare var jQuery:any;
 
 export class NavigationComponent {
 
-  constructor(private router: Router) {}
+  constructor(public afAuth: AngularFireAuth, private router: Router) {}
 
   ngAfterViewInit() {
     jQuery('#side-menu').metisMenu();
@@ -27,5 +30,11 @@ export class NavigationComponent {
     return this.router.url.indexOf(routename) > -1;
   }
 
+  logout() {
+    this.afAuth.auth.signOut();
+    console.log("Пользователь вышел!")
+    this.router.navigate([ '/dashboards/main-view' ]);
+    Cookie.set("User", null);
+  }
 
 }
