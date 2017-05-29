@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {Router} from '@angular/router';
 import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from 'firebase/app';
 import { Cookie } from 'ng2-cookies';
+import { UserService } from "../../shared/user.service";
 import 'jquery-slimscroll';
 
 declare var jQuery:any;
@@ -12,9 +13,15 @@ declare var jQuery:any;
   templateUrl: 'navigation.template.html'
 })
 
-export class NavigationComponent {
+export class NavigationComponent implements OnInit {
 
-  constructor(public afAuth: AngularFireAuth, private router: Router) {}
+  user;
+
+  constructor(public afAuth: AngularFireAuth, private router: Router, private userService: UserService) {}
+
+  ngOnInit() {
+    this.getUserCookie();
+  }
 
   ngAfterViewInit() {
     jQuery('#side-menu').metisMenu();
@@ -35,6 +42,18 @@ export class NavigationComponent {
     console.log("Пользователь вышел!")
     this.router.navigate([ '/dashboards/main-view' ]);
     Cookie.set("User", null);
+  }
+
+  getUserCookie(){
+    this.user =  JSON.parse(Cookie.getAll()['User']);
+    console.log(this.user,888);
+    if(this.user == null) {
+      this.user = {
+        name: "Guest"
+      };
+      this.router.navigate([ '/dashboards/main-view' ]);
+    }
+    console.log(this.user,777);
   }
 
 }

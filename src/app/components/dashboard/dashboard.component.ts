@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, } from '@angular/core';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
 import { FlotChartDirective } from '../../components/charts/flotChart';
+import { Cookie } from 'ng2-cookies';
 
 declare var jQuery:any;
 
@@ -83,6 +84,9 @@ export class DashboardComponent implements OnDestroy, OnInit {
 
   public ngOnInit():any {
     this.nav.className += " white-bg";
+
+
+
   }
 
 

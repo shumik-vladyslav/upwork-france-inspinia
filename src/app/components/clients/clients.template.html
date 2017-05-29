@@ -33,38 +33,38 @@
           <div class="modal-content">
             <div class="modal-body">
               <div class="row">
-                <form class="form-edit" (submit)="onAddSubmit()">
+                <form class="form-edit" #myForm="ngForm" novalidate (ngSubmit)="onAddSubmit(myForm)">
                   <div class="row">
                     <div class="col-sm-12">
                       <div class="form-group">
                         <label class="control-label" for="product_name">Name</label>
-                        <input type="text" id="product_name" [(ngModel)]="name" name="name" value="" placeholder="Name" class="form-control">
+                        <input type="text" id="product_name" required pattern="^[a-zA-Z]+$" [(ngModel)]="name" name="name" value="" placeholder="Name" class="form-control">
                       </div>
                     </div>
                     <div class="col-sm-12">
                       <div class="form-group">
                         <label class="control-label" for="price">Phone</label>
-                        <input type="text" id="price" [(ngModel)]="phone" name="phone" value="" placeholder="Phone" class="form-control">
+                        <input type="text" id="price" required pattern="^\d{4}-\d{3}-\d{4}$" [(ngModel)]="phone" name="phone" value="" placeholder="Phone (format: xxxx-xxx-xxxx)" class="form-control">
                       </div>
                     </div>
                     <div class="col-sm-12">
                       <div class="form-group">
                         <label class="control-label" for="quantity">Email</label>
-                        <input type="text" id="quantity" [(ngModel)]="email" name="email" value="" placeholder="Email" class="form-control">
+                        <input type="email" pattern="[a-zA-Z_]+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}" required id="quantity" [(ngModel)]="email" name="email" value="" placeholder="Email" class="form-control">
                       </div>
                     </div>
                     <div class="col-sm-12">
                       <div class="form-group">
                         <label class="control-label" for="status">Status</label>
                         <select [(ngModel)]="status" name="status" id="status" class="form-control" placeholder="Status">
-                          <option value="1" selected>Enabled</option>
-                          <option value="0">Disabled</option>
+                          <option value="Enabled" selected>Enabled</option>
+                          <option value="Disabled">Disabled</option>
                         </select>
                       </div>
                     </div>
                     <div class="col-sm-12">
                       <div class="form-group">
-                        <button>Create client</button>
+                        <button type="submit" class="btn btn-success" [disabled]="myForm.invalid">Create client</button>
 
                       </div>
                     </div>
@@ -75,13 +75,61 @@
           </div>
         </div>
       </div>
+
+      <div id="modal-form2" class="modal fade" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="row">
+                <form class="form-edit" (submit)="onEditSubmit()">
+                  <fieldset class="form-horizontal">
+                    <div class="form-group"><label class="col-sm-2 control-label">Name:</label>
+                      <div class="col-sm-10"><input [(ngModel)]="name2"  name="name2" type="text" class="form-control" placeholder="Name"></div>
+                    </div>
+                    <div class="form-group"><label class="col-sm-2 control-label">Phone:</label>
+                      <div class="col-sm-10"><input [(ngModel)]="phone2" name="phone2" type="text" class="form-control" placeholder="Phone"></div>
+                    </div>
+                    <div class="form-group"><label class="col-sm-2 control-label">Email:</label>
+                      <div class="col-sm-10"><input [(ngModel)]="email2" name="email2" type="email" class="form-control" placeholder="Email"></div>
+                    </div>
+                    <div class="form-group"><label class="col-sm-2 control-label">Status:</label>
+                      <div class="col-sm-10">
+                        <select [(ngModel)]="status2" name="status2" id="status2" class="form-control" placeholder="Status">
+                          <option value="Enabled" selected>Enabled</option>
+                          <option value="Disabled">Disabled</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group"><label class="col-sm-2 control-label">Address:</label>
+                      <div class="col-sm-10"><input [(ngModel)]="address" name="address" type="text" class="form-control" placeholder="Address"></div>
+                    </div>
+                    <div class="form-group"><label class="col-sm-2 control-label">Order history:</label>
+                      <div class="col-sm-10"><div class="summernote"></div></div>
+                    </div>
+                    <!--<ng2-summernote [(ngModel)]="data" height="500" ></ng2-summernote>-->
+                    <input type="submit" value="Edit client" class="btn btn-success">
+                  </fieldset>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
   <div class="row">
-    <div class="col-lg-12">
+    <div class="col-lg-8">
       <div class="ibox">
         <div class="ibox-content">
+
+          <div class="input-group">
+            <input type="text" placeholder="Search client " class="input form-control">
+            <span class="input-group-btn">
+                    <button type="button" class="btn btn btn-primary"> <i class="fa fa-search"></i> Search</button>
+            </span>
+          </div>
 
           <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
             <thead>
@@ -89,8 +137,8 @@
 
               <th data-toggle="true">Name</th>
               <th data-hide="phone">Phone</th>
-              <th data-hide="all">Email</th>
-              <th data-hide="phone">Status</th>
+              <th data-hide="email">Email</th>
+              <th data-hide="status">Status</th>
               <th class="text-right" data-sort-ignore="true">Action</th>
 
             </tr>
@@ -107,12 +155,11 @@
                 {{client.email}}
               </td>
               <td>
-                <span class="label label-primary">{{client.status}}</span>
+                <span class="label " [ngClass]="{ 'label-primary' : client.statusClass, 'label-danger' : !client.statusClass }">{{client.status}}</span>
               </td>
               <td class="text-right">
                 <div class="btn-group">
-                  <button class="btn-white btn btn-xs" [routerLink]="['/clients/'+client.$key]">View</button>
-                  <button class="btn-white btn btn-xs" [routerLink]="['/clients/'+client.$key]">Edit</button>
+                  <a data-toggle="modal" class="btn btn-primary" (click)="getClient(client.$key)" href="#modal-form2">View client</a>
                 </div>
               </td>
             </tr>
@@ -129,6 +176,792 @@
         </div>
       </div>
     </div>
+    <div class="col-sm-4">
+      <div class="ibox ">
+
+        <div class="ibox-content">
+          <div class="tab-content">
+            <div id="contact-1" class="tab-pane active">
+              <div class="row m-b-lg">
+                <div class="col-lg-4 text-center">
+                  <h2>Nicki Smith</h2>
+
+                  <div class="m-b-sm">
+                    <img alt="image" class="img-circle" src="/assets/images/a2.jpg"
+                         style="width: 62px">
+                  </div>
+                </div>
+                <div class="col-lg-8">
+                  <strong>
+                    About me
+                  </strong>
+
+                  <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                    tempor incididunt ut labore et dolore magna aliqua.
+                  </p>
+                  <button type="button" class="btn btn-primary btn-sm btn-block"><i
+                    class="fa fa-envelope"></i> Send Message
+                  </button>
+                </div>
+              </div>
+              <div class="client-detail">
+                <div class="full-height-scroll">
+
+                  <strong>Last activity</strong>
+
+                  <ul class="list-group clear-list">
+                    <li class="list-group-item fist-item">
+                      <span class="pull-right"> 09:00 pm </span>
+                      Please contact me
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> 10:16 am </span>
+                      Sign a contract
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> 08:22 pm </span>
+                      Open new shop
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> 11:06 pm </span>
+                      Call back to Sylvia
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> 12:00 am </span>
+                      Write a letter to Sandra
+                    </li>
+                  </ul>
+                  <strong>Notes</strong>
+                  <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                    tempor incididunt ut labore et dolore magna aliqua.
+                  </p>
+                  <hr/>
+                  <strong>Timeline activity</strong>
+                  <div id="vertical-timeline" class="vertical-container dark-timeline">
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-coffee"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Conference on the sales results for the previous year.
+                        </p>
+                        <span class="vertical-date small text-muted"> 2:10 pm - 12.06.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-briefcase"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Many desktop publishing packages and web page editors now use Lorem.
+                        </p>
+                        <span class="vertical-date small text-muted"> 4:20 pm - 10.05.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-bolt"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>There are many variations of passages of Lorem Ipsum available.
+                        </p>
+                        <span class="vertical-date small text-muted"> 06:10 pm - 11.03.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon navy-bg">
+                        <i class="fa fa-warning"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>The generated Lorem Ipsum is therefore.
+                        </p>
+                        <span class="vertical-date small text-muted"> 02:50 pm - 03.10.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-coffee"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Conference on the sales results for the previous year.
+                        </p>
+                        <span class="vertical-date small text-muted"> 2:10 pm - 12.06.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-briefcase"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Many desktop publishing packages and web page editors now use Lorem.
+                        </p>
+                        <span class="vertical-date small text-muted"> 4:20 pm - 10.05.2014 </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="contact-2" class="tab-pane">
+              <div class="row m-b-lg">
+                <div class="col-lg-4 text-center">
+                  <h2>Edan Randall</h2>
+
+                  <div class="m-b-sm">
+                    <img alt="image" class="img-circle" src="/assets/images/a3.jpg"
+                         style="width: 62px">
+                  </div>
+                </div>
+                <div class="col-lg-8">
+                  <strong>
+                    About me
+                  </strong>
+
+                  <p>
+                    Many desktop publishing packages and web page editors now use Lorem Ipsum as their default tempor incididunt model text.
+                  </p>
+                  <button type="button" class="btn btn-primary btn-sm btn-block"><i
+                    class="fa fa-envelope"></i> Send Message
+                  </button>
+                </div>
+              </div>
+              <div class="client-detail">
+                <div class="full-height-scroll">
+
+                  <strong>Last activity</strong>
+
+                  <ul class="list-group clear-list">
+                    <li class="list-group-item fist-item">
+                      <span class="pull-right"> 09:00 pm </span>
+                      Lorem Ipsum available
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> 10:16 am </span>
+                      Latin words, combined
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> 08:22 pm </span>
+                      Open new shop
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> 11:06 pm </span>
+                      The generated Lorem Ipsum
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> 12:00 am </span>
+                      Content here, content here
+                    </li>
+                  </ul>
+                  <strong>Notes</strong>
+                  <p>
+                    There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words.
+                  </p>
+                  <hr/>
+                  <strong>Timeline activity</strong>
+                  <div id="vertical-timeline" class="vertical-container dark-timeline">
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-briefcase"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Many desktop publishing packages and web page editors now use Lorem.
+                        </p>
+                        <span class="vertical-date small text-muted"> 4:20 pm - 10.05.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-bolt"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>There are many variations of passages of Lorem Ipsum available.
+                        </p>
+                        <span class="vertical-date small text-muted"> 06:10 pm - 11.03.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon navy-bg">
+                        <i class="fa fa-warning"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>The generated Lorem Ipsum is therefore.
+                        </p>
+                        <span class="vertical-date small text-muted"> 02:50 pm - 03.10.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-coffee"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Conference on the sales results for the previous year.
+                        </p>
+                        <span class="vertical-date small text-muted"> 2:10 pm - 12.06.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-briefcase"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Many desktop publishing packages and web page editors now use Lorem.
+                        </p>
+                        <span class="vertical-date small text-muted"> 4:20 pm - 10.05.2014 </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="contact-3" class="tab-pane">
+              <div class="row m-b-lg">
+                <div class="col-lg-4 text-center">
+                  <h2>Jasper Carson</h2>
+
+                  <div class="m-b-sm">
+                    <img alt="image" class="img-circle" src="/assets/images/a4.jpg"
+                         style="width: 62px">
+                  </div>
+                </div>
+                <div class="col-lg-8">
+                  <strong>
+                    About me
+                  </strong>
+
+                  <p>
+                    Latin professor at Hampden-Sydney College in Virginia, looked  embarrassing hidden in the middle.
+                  </p>
+                  <button type="button" class="btn btn-primary btn-sm btn-block"><i
+                    class="fa fa-envelope"></i> Send Message
+                  </button>
+                </div>
+              </div>
+              <div class="client-detail">
+                <div class="full-height-scroll">
+
+                  <strong>Last activity</strong>
+
+                  <ul class="list-group clear-list">
+                    <li class="list-group-item fist-item">
+                      <span class="pull-right"> 09:00 pm </span>
+                      Aldus PageMaker including
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> 10:16 am </span>
+                      Finibus Bonorum et Malorum
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> 08:22 pm </span>
+                      Write a letter to Sandra
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> 11:06 pm </span>
+                      Standard chunk of Lorem
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> 12:00 am </span>
+                      Open new shop
+                    </li>
+                  </ul>
+                  <strong>Notes</strong>
+                  <p>
+                    Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.
+                  </p>
+                  <hr/>
+                  <strong>Timeline activity</strong>
+                  <div id="vertical-timeline" class="vertical-container dark-timeline">
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-coffee"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Conference on the sales results for the previous year.
+                        </p>
+                        <span class="vertical-date small text-muted"> 2:10 pm - 12.06.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-briefcase"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Many desktop publishing packages and web page editors now use Lorem.
+                        </p>
+                        <span class="vertical-date small text-muted"> 4:20 pm - 10.05.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-bolt"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>There are many variations of passages of Lorem Ipsum available.
+                        </p>
+                        <span class="vertical-date small text-muted"> 06:10 pm - 11.03.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon navy-bg">
+                        <i class="fa fa-warning"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>The generated Lorem Ipsum is therefore.
+                        </p>
+                        <span class="vertical-date small text-muted"> 02:50 pm - 03.10.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-coffee"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Conference on the sales results for the previous year.
+                        </p>
+                        <span class="vertical-date small text-muted"> 2:10 pm - 12.06.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-briefcase"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Many desktop publishing packages and web page editors now use Lorem.
+                        </p>
+                        <span class="vertical-date small text-muted"> 4:20 pm - 10.05.2014 </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="contact-4" class="tab-pane">
+              <div class="row m-b-lg">
+                <div class="col-lg-4 text-center">
+                  <h2>Reuben Pacheco</h2>
+
+                  <div class="m-b-sm">
+                    <img alt="image" class="img-circle" src="/assets/images/a5.jpg"
+                         style="width: 62px">
+                  </div>
+                </div>
+                <div class="col-lg-8">
+                  <strong>
+                    About me
+                  </strong>
+
+                  <p>
+                    Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero,written in 45 BC. This book is a treatise on.
+                  </p>
+                  <button type="button" class="btn btn-primary btn-sm btn-block"><i
+                    class="fa fa-envelope"></i> Send Message
+                  </button>
+                </div>
+              </div>
+              <div class="client-detail">
+                <div class="full-height-scroll">
+
+                  <strong>Last activity</strong>
+
+                  <ul class="list-group clear-list">
+                    <li class="list-group-item fist-item">
+                      <span class="pull-right"> 09:00 pm </span>
+                      The point of using
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> 10:16 am </span>
+                      Lorem Ipsum is that it has
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> 08:22 pm </span>
+                      Text, and a search for 'lorem ipsum'
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> 11:06 pm </span>
+                      Passages of Lorem Ipsum
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> 12:00 am </span>
+                      If you are going
+                    </li>
+                  </ul>
+                  <strong>Notes</strong>
+                  <p>
+                    Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
+                  </p>
+                  <hr/>
+                  <strong>Timeline activity</strong>
+                  <div id="vertical-timeline" class="vertical-container dark-timeline">
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-coffee"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Conference on the sales results for the previous year.
+                        </p>
+                        <span class="vertical-date small text-muted"> 2:10 pm - 12.06.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-briefcase"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Many desktop publishing packages and web page editors now use Lorem.
+                        </p>
+                        <span class="vertical-date small text-muted"> 4:20 pm - 10.05.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-bolt"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>There are many variations of passages of Lorem Ipsum available.
+                        </p>
+                        <span class="vertical-date small text-muted"> 06:10 pm - 11.03.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon navy-bg">
+                        <i class="fa fa-warning"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>The generated Lorem Ipsum is therefore.
+                        </p>
+                        <span class="vertical-date small text-muted"> 02:50 pm - 03.10.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-coffee"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Conference on the sales results for the previous year.
+                        </p>
+                        <span class="vertical-date small text-muted"> 2:10 pm - 12.06.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-briefcase"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Many desktop publishing packages and web page editors now use Lorem.
+                        </p>
+                        <span class="vertical-date small text-muted"> 4:20 pm - 10.05.2014 </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="company-1" class="tab-pane">
+              <div class="m-b-lg">
+                <h2>Tellus Institute</h2>
+
+                <p>
+                  Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero,written in 45 BC. This book is a treatise on.
+                </p>
+                <div>
+                  <small>Active project completion with: 48%</small>
+                  <div class="progress progress-mini">
+                    <div style="width: 48%;" class="progress-bar"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="client-detail">
+                <div class="full-height-scroll">
+
+                  <strong>Last activity</strong>
+
+                  <ul class="list-group clear-list">
+                    <li class="list-group-item fist-item">
+                      <span class="pull-right"> <span class="label label-primary">NEW</span> </span>
+                      The point of using
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> <span class="label label-warning">WAITING</span></span>
+                      Lorem Ipsum is that it has
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> <span class="label label-danger">BLOCKED</span> </span>
+                      If you are going
+                    </li>
+                  </ul>
+                  <strong>Notes</strong>
+                  <p>
+                    Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
+                  </p>
+                  <hr/>
+                  <strong>Timeline activity</strong>
+                  <div id="vertical-timeline" class="vertical-container dark-timeline">
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-coffee"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Conference on the sales results for the previous year.
+                        </p>
+                        <span class="vertical-date small text-muted"> 2:10 pm - 12.06.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-briefcase"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Many desktop publishing packages and web page editors now use Lorem.
+                        </p>
+                        <span class="vertical-date small text-muted"> 4:20 pm - 10.05.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-bolt"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>There are many variations of passages of Lorem Ipsum available.
+                        </p>
+                        <span class="vertical-date small text-muted"> 06:10 pm - 11.03.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon navy-bg">
+                        <i class="fa fa-warning"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>The generated Lorem Ipsum is therefore.
+                        </p>
+                        <span class="vertical-date small text-muted"> 02:50 pm - 03.10.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-coffee"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Conference on the sales results for the previous year.
+                        </p>
+                        <span class="vertical-date small text-muted"> 2:10 pm - 12.06.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-briefcase"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Many desktop publishing packages and web page editors now use Lorem.
+                        </p>
+                        <span class="vertical-date small text-muted"> 4:20 pm - 10.05.2014 </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="company-2" class="tab-pane">
+              <div class="m-b-lg">
+                <h2>Penatibus Consulting</h2>
+
+                <p>
+                  There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some.
+                </p>
+                <div>
+                  <small>Active project completion with: 22%</small>
+                  <div class="progress progress-mini">
+                    <div style="width: 22%;" class="progress-bar"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="client-detail">
+                <div class="full-height-scroll">
+
+                  <strong>Last activity</strong>
+
+                  <ul class="list-group clear-list">
+                    <li class="list-group-item fist-item">
+                      <span class="pull-right"> <span class="label label-warning">WAITING</span> </span>
+                      Aldus PageMaker
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"><span class="label label-primary">NEW</span> </span>
+                      Lorem Ipsum, you need to be sure
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"> <span class="label label-danger">BLOCKED</span> </span>
+                      The generated Lorem Ipsum
+                    </li>
+                  </ul>
+                  <strong>Notes</strong>
+                  <p>
+                    Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
+                  </p>
+                  <hr/>
+                  <strong>Timeline activity</strong>
+                  <div id="vertical-timeline" class="vertical-container dark-timeline">
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-coffee"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Conference on the sales results for the previous year.
+                        </p>
+                        <span class="vertical-date small text-muted"> 2:10 pm - 12.06.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-briefcase"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Many desktop publishing packages and web page editors now use Lorem.
+                        </p>
+                        <span class="vertical-date small text-muted"> 4:20 pm - 10.05.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-bolt"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>There are many variations of passages of Lorem Ipsum available.
+                        </p>
+                        <span class="vertical-date small text-muted"> 06:10 pm - 11.03.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon navy-bg">
+                        <i class="fa fa-warning"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>The generated Lorem Ipsum is therefore.
+                        </p>
+                        <span class="vertical-date small text-muted"> 02:50 pm - 03.10.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-coffee"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Conference on the sales results for the previous year.
+                        </p>
+                        <span class="vertical-date small text-muted"> 2:10 pm - 12.06.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-briefcase"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Many desktop publishing packages and web page editors now use Lorem.
+                        </p>
+                        <span class="vertical-date small text-muted"> 4:20 pm - 10.05.2014 </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="company-3" class="tab-pane">
+              <div class="m-b-lg">
+                <h2>Ultrices Incorporated</h2>
+
+                <p>
+                  Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text.
+                </p>
+                <div>
+                  <small>Active project completion with: 72%</small>
+                  <div class="progress progress-mini">
+                    <div style="width: 72%;" class="progress-bar"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="client-detail">
+                <div class="full-height-scroll">
+
+                  <strong>Last activity</strong>
+
+                  <ul class="list-group clear-list">
+                    <li class="list-group-item fist-item">
+                      <span class="pull-right"> <span class="label label-danger">BLOCKED</span> </span>
+                      Hidden in the middle of text
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right"><span class="label label-primary">NEW</span> </span>
+                      Non-characteristic words etc.
+                    </li>
+                    <li class="list-group-item">
+                      <span class="pull-right">  <span class="label label-warning">WAITING</span> </span>
+                      Bonorum et Malorum
+                    </li>
+                  </ul>
+                  <strong>Notes</strong>
+                  <p>
+                    There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour.
+                  </p>
+                  <hr/>
+                  <strong>Timeline activity</strong>
+                  <div id="vertical-timeline" class="vertical-container dark-timeline">
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-briefcase"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Many desktop publishing packages and web page editors now use Lorem.
+                        </p>
+                        <span class="vertical-date small text-muted"> 4:20 pm - 10.05.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-bolt"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>There are many variations of passages of Lorem Ipsum available.
+                        </p>
+                        <span class="vertical-date small text-muted"> 06:10 pm - 11.03.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon navy-bg">
+                        <i class="fa fa-warning"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>The generated Lorem Ipsum is therefore.
+                        </p>
+                        <span class="vertical-date small text-muted"> 02:50 pm - 03.10.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-coffee"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Conference on the sales results for the previous year.
+                        </p>
+                        <span class="vertical-date small text-muted"> 2:10 pm - 12.06.2014 </span>
+                      </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                      <div class="vertical-timeline-icon gray-bg">
+                        <i class="fa fa-briefcase"></i>
+                      </div>
+                      <div class="vertical-timeline-content">
+                        <p>Many desktop publishing packages and web page editors now use Lorem.
+                        </p>
+                        <span class="vertical-date small text-muted"> 4:20 pm - 10.05.2014 </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
   </div>
 
 

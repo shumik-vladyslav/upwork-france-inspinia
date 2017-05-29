@@ -75,3 +75,10 @@ export function summernote(){
   $('.summernote').summernote();
 
 }
+
+export function  slimscroll(){
+  // Initialize slimscroll for right sidebar
+  $('.full-height-scroll').slimscroll({
+    height: '100%'
+  })
+}

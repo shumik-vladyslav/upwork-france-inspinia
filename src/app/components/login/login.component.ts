@@ -49,6 +49,12 @@ export class LoginUserComponent implements OnInit {
                     }
 
                     this.userService.addUser(userInfo);
+
+                    Cookie.set("User", JSON.stringify({
+                      name: snapshot.name,
+                      email: snapshot.email,
+                    }));
+
                     console.log(userInfo,44);
                     this.router.navigate(['/dashboards/main-view']);
                   } else {

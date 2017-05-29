@@ -6,6 +6,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/take';
 import {AngularFireAuth} from 'angularfire2/auth';
 import * as firebase from 'firebase/app';
+import { Cookie } from 'ng2-cookies';
 
 @Injectable()
 export class UserService {
@@ -22,6 +23,17 @@ export class UserService {
   }
   getUser() {
     return this.user;
+  }
+
+  getUserCookie(){
+    let userCookie = JSON.parse(Cookie.getAll()['User']);
+    if(userCookie) {
+      return JSON.parse(Cookie.getAll()['User'])
+    } else {
+      console.log("Вы вошли как гость!");
+      return true;
+    }
+    //return JSON.parse(Cookie.getAll()['User']);
   }
 
 }

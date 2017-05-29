@@ -17,6 +17,17 @@ export class OrdersComponent implements OnInit {
   status;
   paid;
 
+  id;
+  orderId2;
+  clientName2;
+  status2;
+  paid2;
+  products;
+  quantity;
+  priceMethod;
+  notes;
+  ticketNumber;
+
   orders: FirebaseListObservable<any[]>;
 
   constructor(public db: AngularFireDatabase, private router:Router) {
@@ -29,6 +40,13 @@ export class OrdersComponent implements OnInit {
   }
 
   onAddSubmit(){
+    let statusClass;
+    if(this.status2 == 'pending') {
+      statusClass = false;
+    } else {
+      statusClass = true;
+    }
+
     let order = {
       orderId: this.orderId,
       clientName: this.clientName,
@@ -40,10 +58,70 @@ export class OrdersComponent implements OnInit {
       notes: "",
       ticketNumber: "",
       date: "2016, 12, 30",
-      orderSum: '800'
+      orderSum: '800',
+      statusClass: statusClass,
     }
 
     this.orders.push(order);
 
+  }
+
+  getOrder(keyClient) {
+    let key = keyClient;
+
+    this.db.list('/orders').subscribe(snapshots => {
+
+      snapshots.forEach(snapshot => {
+        let currentKey = snapshot.$key;
+        console.log(currentKey,554);
+
+
+        if(key == currentKey) {
+          this.id = snapshot.$key;
+          this.clientName2 = snapshot.clientName;
+          this.status2 = snapshot.status;
+          this.paid2 = snapshot.paid;
+          this.products = snapshot.products;
+          this.quantity = snapshot.quantity;
+          this.priceMethod = snapshot.priceMethod;
+          this.notes = snapshot.notes;
+          this.ticketNumber = snapshot.ticketNumber;
+          //console.log(this.data);
+
+
+        }
+
+      });
+
+    });
+
+    console.log(key);
+    console.log("Выбрать клиента");
+  }
+
+
+  onEditSubmit(){
+    let statusClass;
+    if(this.status2 == 'pending') {
+      statusClass = false;
+    } else {
+      statusClass = true;
+    }
+
+    let order = {
+      clientName: this.clientName2,
+      products: this.products,
+      quantity: this.quantity,
+      paid: this.paid2,
+      priceMethod: this.priceMethod,
+      notes: this.notes,
+      ticketNumber: this.ticketNumber,
+      status: this.status2,
+      statusClass: statusClass,
+    }
+
+
+    this.orders.update(this.id, order);
+    this.router.navigate(['/orders']);
   }
 }
