@@ -24,7 +24,7 @@ export class TopNavbarComponent {
   logout() {
     this.afAuth.auth.signOut();
     console.log("Пользователь вышел!")
-    this.router.navigate([ '/dashboards/main-view' ]);
+    this.router.navigate([ '/login' ]);
     Cookie.set("User", null);
   }
   login() {

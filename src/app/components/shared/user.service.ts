@@ -33,7 +33,6 @@ export class UserService {
       console.log("Вы вошли как гость!");
       return true;
     }
-    //return JSON.parse(Cookie.getAll()['User']);
   }
 
 }

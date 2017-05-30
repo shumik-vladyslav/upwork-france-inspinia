@@ -2,8 +2,10 @@ import { Component, OnDestroy, OnInit, } from '@angular/core';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
 import { FlotChartDirective } from '../../components/charts/flotChart';
 import { Cookie } from 'ng2-cookies';
+import { footable } from '../../app.helpers';
 
 declare var jQuery:any;
+declare var $: any;
 
 @Component({
   selector: 'dashboard',
@@ -20,7 +22,17 @@ export class DashboardComponent implements OnDestroy, OnInit {
   visits;
   userActivity;
   ordersTable;
+  ordersTable2;
   infos= [];
+
+  orderPercent;
+  lastOrderPercent;
+  totalOrderPercent;
+  incomePercent;
+
+  sumCurrentMonth;
+  sumLastMonth;
+
 
   projects: FirebaseListObservable<any[]>;
   public constructor(public db: AngularFireDatabase) {
@@ -38,18 +50,20 @@ export class DashboardComponent implements OnDestroy, OnInit {
     this.projects = db.list('/projects');
     this.mainData = db.object('/mainData').subscribe(client => {
 
-      this.orders = client.orders;
-      this.income = client.income;
+      //this.orders = client.orders;
+      //this.income = client.income;
       this.visits = client.visits;
       this.userActivity = client.userActivity;
 
     });
     console.log(this.orders,55);
 
+    this.ordersTable2 = db.list('/orders');
     this.ordersTable = db.list('/orders').subscribe(snapshots => {
 
 
       snapshots.forEach(snapshot => {
+
         let day = [];
         let split = snapshot.date.split(',');
         day.push(snapshot.date, 500);
@@ -80,12 +94,63 @@ export class DashboardComponent implements OnDestroy, OnInit {
 
     });
 
+
+    this.ordersTable = db.list('/orders').subscribe(snapshots => {
+
+      this.income = 0;
+      this.orders = 0;
+      this.orderPercent = 0;
+      this.lastOrderPercent = 0;
+      this.totalOrderPercent = 0;
+
+      this.sumCurrentMonth = 0;
+      this.sumLastMonth = 0;
+      snapshots.forEach(snapshot => {
+
+
+        let split = snapshot.date.split(',');
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth() + 1;
+        let lastMonth = currentDate.getMonth();
+        this.orders += 1;
+        this.income += +snapshot.orderSum;
+        console.log(split, 888888888);
+        console.log(currentMonth, 8888888889);
+
+        if(+split[1] == currentMonth) {
+          this.orderPercent = this.orderPercent + 1;
+          this.sumCurrentMonth += +snapshot.orderSum;
+        }
+
+        if(+split[1] == lastMonth) {
+          this.lastOrderPercent = this.lastOrderPercent + 1;
+          this.sumLastMonth += +snapshot.orderSum;  
+        }
+
+        this.totalOrderPercent = this.orderPercent - this.lastOrderPercent;
+
+        console.log(this.orderPercent,11111111111);
+        console.log(this.lastOrderPercent,1111111111122);
+
+        console.log(this.sumCurrentMonth,33333);
+        console.log(this.sumLastMonth,33333555);
+        this.incomePercent = this.sumCurrentMonth - this.sumLastMonth;
+
+      });
+
+
+
+
+
+
+    });
+
   }
 
   public ngOnInit():any {
     this.nav.className += " white-bg";
 
-
+    footable();
 
   }
 
@@ -318,5 +383,6 @@ export class DashboardComponent implements OnDestroy, OnInit {
 
     });
   }
+
 
 }

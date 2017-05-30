@@ -28,11 +28,24 @@ export class OrdersComponent implements OnInit {
   notes;
   ticketNumber;
 
+  count;
+
   orders: FirebaseListObservable<any[]>;
+  clients: FirebaseListObservable<any[]>;
+  productsNames: FirebaseListObservable<any[]>;
 
   constructor(public db: AngularFireDatabase, private router:Router) {
 
     this.orders = db.list('/orders');
+    this.clients = db.list('/clients');
+    this.productsNames = db.list('/products');
+
+    this.db.list('/orders').subscribe(snapshots => {
+
+      this.count = snapshots.length + 1;
+      console.log(this.count, 999);
+
+    });
   }
 
   public ngOnInit():any {
@@ -41,24 +54,24 @@ export class OrdersComponent implements OnInit {
 
   onAddSubmit(){
     let statusClass;
-    if(this.status2 == 'pending') {
+    if(this.status == 'pending') {
       statusClass = false;
     } else {
       statusClass = true;
     }
 
     let order = {
-      orderId: this.orderId,
+      orderId: this.count,
       clientName: this.clientName,
       status: this.status,
       paid: this.paid,
-      products: "",
+      products: this.products,
       quantity: "",
       priceMethod: "",
       notes: "",
       ticketNumber: "",
-      date: "2016, 12, 30",
-      orderSum: '800',
+      date: "2017, 5, 31",
+      orderSum: '500',
       statusClass: statusClass,
     }
 
@@ -74,6 +87,7 @@ export class OrdersComponent implements OnInit {
       snapshots.forEach(snapshot => {
         let currentKey = snapshot.$key;
         console.log(currentKey,554);
+
 
 
         if(key == currentKey) {

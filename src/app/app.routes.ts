@@ -29,31 +29,32 @@ import { ProjectsComponent } from "./components/projects/projects.component";
 import { ProfilComponent } from "./components/profil/profil.component";
 import { PaymentComponent } from "./components/payment/payment.component";
 import { MessagesComponent } from "./components/messages/messages.component";
+import {AuthGuard} from "./components/auth.service";
 
 export const ROUTES:Routes = [
   // Main redirect
-  {path: '', redirectTo: 'dashboards/main-view', pathMatch: 'full'},
+  {path: '', redirectTo: 'login', pathMatch: 'full'},
 
 
   // App views
   {
-    path: 'dashboards', component: BasicLayoutComponent,
+    path: 'dashboards', component: BasicLayoutComponent, canActivate: [AuthGuard],
     children: [
-      {path: 'main-view', component: DashboardComponent},
+      {path: 'main-view', component: DashboardComponent, canActivate: [AuthGuard]},
       {path: 'cash', component: CashComponent},
-      {path: 'dashboard1', component: Dashboard1Component},
-      {path: 'dashboard2', component: Dashboard2Component},
-      {path: 'dashboard3', component: Dashboard3Component},
-      {path: 'dashboard4', component: Dashboard4Component},
-      {path: 'dashboard5', component: Dashboard5Component}
+      {path: 'dashboard1', component: Dashboard1Component, canActivate: [AuthGuard]},
+      {path: 'dashboard2', component: Dashboard2Component, canActivate: [AuthGuard]},
+      {path: 'dashboard3', component: Dashboard3Component, canActivate: [AuthGuard]},
+      {path: 'dashboard4', component: Dashboard4Component, canActivate: [AuthGuard]},
+      {path: 'dashboard5', component: Dashboard5Component, canActivate: [AuthGuard]}
     ]
   },
   {
-    path: 'preferences', component: BasicLayoutComponent,
+    path: 'preferences', component: BasicLayoutComponent, canActivate: [AuthGuard],
     children: [
-      {path: 'profil', component: ProfilComponent},
-      {path: 'payment', component: PaymentComponent},
-      {path: 'messages', component: MessagesComponent},
+      {path: 'profil', component: ProfilComponent, canActivate: [AuthGuard]},
+      {path: 'payment', component: PaymentComponent, canActivate: [AuthGuard]},
+      {path: 'messages', component: MessagesComponent, canActivate: [AuthGuard]},
     ]
   },
   {
@@ -63,17 +64,17 @@ export const ROUTES:Routes = [
     ]
   },
   {
-    path: '', component: BasicLayoutComponent,
+    path: '', component: BasicLayoutComponent, canActivate: [AuthGuard],
     children: [
-      {path: 'starterview', component: StarterViewComponent},
-      {path: 'clients', component: ClientsComponent},
-      {path: 'clients/:id', component: EditClientComponent},
-      {path: 'products', component: ProductsComponent},
-      {path: 'products/:id', component: EditProductComponent},
-      {path: 'orders', component: OrdersComponent},
-      {path: 'orders/:id', component: EditOrderComponent},
-      {path: 'preferences', component: PreferencesComponent},
-      {path: 'projects', component: ProjectsComponent},
+      {path: 'starterview', component: StarterViewComponent, canActivate: [AuthGuard]},
+      {path: 'clients', component: ClientsComponent, canActivate: [AuthGuard]},
+      {path: 'clients/:id', component: EditClientComponent, canActivate: [AuthGuard]},
+      {path: 'products', component: ProductsComponent, canActivate: [AuthGuard]},
+      {path: 'products/:id', component: EditProductComponent, canActivate: [AuthGuard]},
+      {path: 'orders', component: OrdersComponent, canActivate: [AuthGuard]},
+      {path: 'orders/:id', component: EditOrderComponent, canActivate: [AuthGuard]},
+      {path: 'preferences', component: PreferencesComponent, canActivate: [AuthGuard]},
+      {path: 'projects', component: ProjectsComponent, canActivate: [AuthGuard]},
     ]
   },
   {
@@ -85,5 +86,5 @@ export const ROUTES:Routes = [
   },
 
   // Handle all other routes
-  {path: '**',  redirectTo: 'dashboards/main-view'}
+  //{path: '**',  redirectTo: 'dashboards/main-view'}
 ];

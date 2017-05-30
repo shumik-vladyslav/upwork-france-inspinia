@@ -24,10 +24,13 @@ export class ProfilComponent implements OnInit {
   address;
   country;
   storeName;
+  password;
 
   users;
   user;
   obj;
+
+  userId;
 
   /** URL for upload server images */
   @Input() hostUpload: string;
@@ -52,14 +55,28 @@ export class ProfilComponent implements OnInit {
   ngOnInit() {
     this.id = this.route.snapshot.params['id'];
     this.users = this.db.list('/users');
-    this.user = this.db.object('/users/'+this.id).subscribe(user => {
+    this.user =  this.db.list('/users').subscribe(users => {
 
-      this.name = user.name;
-      this.phone = user.phone;
-      this.email = user.email;
-      this.status = user.status;
-      this.address = user.address;
-      this.country = user.country;
+
+      let userId = JSON.parse(Cookie.getAll()['User']);
+      users.forEach(snapshot => {
+
+        if(snapshot.email == userId.email){
+          console.log(snapshot.name);
+
+          this.id = snapshot.$key;
+          this.name = snapshot.name;
+          this.phone = snapshot.phone;
+          this.email = snapshot.email;
+          this.status = snapshot.status;
+          this.address = snapshot.address;
+          this.country = snapshot.country;
+          this.password = snapshot.password;
+        }
+
+      });
+
+
     });
 
     this.obj = this.userService.getUser();
@@ -72,16 +89,20 @@ export class ProfilComponent implements OnInit {
   onEditSubmit(){
     let user = {
       name: this.name,
-      phone: this.phone,
+      //phone: this.phone,
       email: this.email,
-      status: this.status,
-      address: this.address,
-      country: this.country,
+      //status: this.status,
+      //address: this.address,
+      //country: this.country,
     }
 
 
     this.users.update(this.id, user);
-    this.router.navigate(['/profil']);
+    this.router.navigate(['/preferences/profil']);
+
+    Cookie.set("User", JSON.stringify({
+      name: this.name,
+    }));
   }
 
 }

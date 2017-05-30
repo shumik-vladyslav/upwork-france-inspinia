@@ -28,6 +28,7 @@ import { ProfilComponent } from "./components/profil/profil.component";
 import { UserService } from "./components/shared/user.service";
 import { PaymentComponent } from "./components/payment/payment.component";
 import { MessagesComponent } from "./components/messages/messages.component";
+import {AuthGuard} from "./components/auth.service";
 
 import { Ng2Summernote } from 'ng2-summernote/ng2-summernote';
 
@@ -90,7 +91,7 @@ export const firebaseConfig = {
     AngularFireAuthModule,
     AngularFireDatabaseModule
   ],
-  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy},UserService],
+  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy},UserService,AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

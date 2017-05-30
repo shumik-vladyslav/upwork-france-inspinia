@@ -36,16 +36,26 @@
                   <div class="row">
                     <div class="col-sm-12">
                       <div class="form-group">
-                        <label class="control-label" for="product_name">Order ID</label>
-                        <input type="text" id="product_name" [(ngModel)]="orderId" name="orderId" value="" placeholder="Order ID" class="form-control">
+                        <label class="control-label" for="clientName">Client Name</label>
+
+                        <select [(ngModel)]="clientName" name="clientName" id="clientName" class="form-control" placeholder="Client Name">
+                          <option *ngFor="let client of clients | async" value="{{client.name}}" selected>{{client.name}}</option>
+                        </select>
+
                       </div>
                     </div>
+
                     <div class="col-sm-12">
                       <div class="form-group">
-                        <label class="control-label" for="price">Client Name</label>
-                        <input type="text" id="price" [(ngModel)]="clientName" name="clientName" value="" placeholder="Client Name" class="form-control">
+                        <label class="control-label" for="products">Product</label>
+
+                        <select [(ngModel)]="products" name="products" id="products" class="form-control" placeholder="Product">
+                          <option *ngFor="let product of productsNames | async" value="{{product.name}}" selected>{{product.name}}</option>
+                        </select>
+
                       </div>
                     </div>
+
                     <div class="col-sm-12">
                       <div class="form-group">
                         <label class="control-label" for="paid">Price paid/unpaid</label>
