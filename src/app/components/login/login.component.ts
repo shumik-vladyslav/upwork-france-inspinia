@@ -19,73 +19,64 @@ export class LoginUserComponent implements OnInit {
   users;
 
 
-  constructor(public afAuth: AngularFireAuth, private db: AngularFireDatabase, private router: Router, private userService: UserService) {
+  constructor(public afAuth: AngularFireAuth, private db: AngularFireDatabase,
+   private router: Router, private userService: UserService) {
     this.user = afAuth.authState;
     this.users = db.list('/users');
   }
 
-
   onSubmit(formData) {
-    if(formData.valid) {
-      let name =  formData.value.name;
-      let email = formData.value.email;
-      let password = formData.value.password;
-      this.afAuth.auth.signInWithEmailAndPassword( email , password).then(
-        (success) => {
-          console.log(success);
-          this.user.subscribe(data => {
-            if (data && data.email) {
-              this.users.subscribe(snapshots => {
-                let flag;
+    if (!formData.valid) {
+      console.log('Invalid form data');
+      return;
+    }
 
-                snapshots.forEach(snapshot => {
-                  if (snapshot.name === name){
-                    flag = true;
-                    console.log(snapshot.email, data.email, name,snapshot.name);
-                    console.log("Пользователь залогинелся!");
+    let name =  formData.value.name;
+    let email = formData.value.email;
+    let password = formData.value.password;
 
-                    let userInfo = {
-                      email: snapshot.email,
-                    }
+    this.afAuth.auth.signInWithEmailAndPassword( email , password).then(
+      (success) => {
+        this.users.subscribe(data => {
+          const fUser = data.filter(user => user.email.toLowerCase() == email.toLowerCase() )[0];
+          if (!fUser) {
+            console.log('Error user not found in firebase');
+            this.logout();
+            return;
+          }
+          if (fUser.name !== name) {
+            console.log('Wrong login');
+            this.logout();
+            return;
+          }
+          console.log('Login seccessful');
 
-                    this.userService.addUser(userInfo);
+          this.userService.addUser(fUser);
 
-                    Cookie.set("User", JSON.stringify({
-                      name: snapshot.name,
-                      email: snapshot.email,
-                    }));
+          Cookie.set('User', JSON.stringify({
+            name: fUser.name,
+            email: fUser.email,
+            userInfo: fUser,
+            firebaseKey: fUser.$key
+          }));
 
-                    console.log(userInfo,44);
-                    this.router.navigate(['/dashboards/main-view']);
-                  } else {
-                    console.log("Вы ввели неверный логин!");
-                  }
-                });
-
-
-              });
-            } else{
-              console.log(2)
-            }
-
-          });
-
-        }).catch(
-        (err) => {
-          console.log(err);
-          this.error = err;
+          // console.log(userInfo,44);
+          this.router.navigate(['/dashboards/main-view']);
         });
 
-
-    }
+      }).catch(
+      (err) => {
+        console.log(err);
+        this.error = err;
+      });
   }
 
 
   logout() {
+    console.log('logout');
     this.afAuth.auth.signOut();
-    console.log("Пользователь вышел!")
+    Cookie.set('User', null);
     this.router.navigate([ '/login' ]);
-    Cookie.set("User", null);
   }
 
   ngOnInit() {

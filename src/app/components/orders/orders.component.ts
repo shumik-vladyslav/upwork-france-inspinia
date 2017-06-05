@@ -2,9 +2,38 @@ import { Component, OnInit } from '@angular/core';
 import { footable } from '../../app.helpers';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
 import {Router} from '@angular/router';
+import { NgForm, FormControl, FormGroup, Validators } from '@angular/forms';
 
-declare var jQuery:any;
+declare var jQuery: any;
 declare var $: any;
+
+class Order {
+  // firabase key
+  $key;
+
+  orderId;
+  clientName;
+  status;
+  paid;
+  products;
+  quantity;
+  priceMethod;
+  notes;
+  ticketNumber;
+  date;
+  orderSum;
+  statusClass;
+
+  constructor() {
+      this.quantity = 0;
+      this.priceMethod = 'unpaid';
+      this.status = 'pending';
+      this.statusClass = false;
+      this.notes = '';
+      this.ticketNumber = '';
+      this.orderSum = 0;
+  };
+}
 
 @Component({
   selector: 'orders',
@@ -12,130 +41,98 @@ declare var $: any;
 })
 export class OrdersComponent implements OnInit {
 
-  orderId;
-  clientName;
-  status;
-  paid;
+  createOrderModel: Order = new Order();
+  editOrderModel: Order = new Order();
 
-  id;
-  orderId2;
-  clientName2;
-  status2;
-  paid2;
-  products;
-  quantity;
-  priceMethod;
-  notes;
-  ticketNumber;
-
-  count;
+  totalOrders;
+  searchOrder;
 
   orders: FirebaseListObservable<any[]>;
   clients: FirebaseListObservable<any[]>;
-  productsNames: FirebaseListObservable<any[]>;
+  productsFrbsCollection: FirebaseListObservable<any[]>;
+  productsNames: any[];
 
   constructor(public db: AngularFireDatabase, private router:Router) {
 
     this.orders = db.list('/orders');
     this.clients = db.list('/clients');
-    this.productsNames = db.list('/products');
+    this.productsFrbsCollection = db.list('/products');
 
     this.db.list('/orders').subscribe(snapshots => {
 
-      this.count = snapshots.length + 1;
-      console.log(this.count, 999);
+      this.totalOrders = snapshots.length;
+      console.log(`orders totalOrders ${this.totalOrders}`);
 
     });
   }
 
-  public ngOnInit():any {
+  public ngOnInit(): void {
     footable();
   }
 
-  onAddSubmit(){
-    let statusClass;
-    if(this.status == 'pending') {
-      statusClass = false;
-    } else {
-      statusClass = true;
-    }
+  onCreateDialogShow():void {
+      this.productsFrbsCollection.subscribe(snapshots => {
 
-    let order = {
-      orderId: this.count,
-      clientName: this.clientName,
-      status: this.status,
-      paid: this.paid,
-      products: this.products,
-      quantity: "",
-      priceMethod: "",
-      notes: "",
-      ticketNumber: "",
-      date: "2017, 5, 31",
-      orderSum: '500',
-      statusClass: statusClass,
-    }
+      this.productsNames = snapshots;
+      console.log(`orders totalOrders ${this.totalOrders}`);
+      setTimeout(() => {
+          $('#products').chosen({disable_search_threshold: 10});
+          $('#products').trigger('chosen:updated');
+        }
+      , 100);
+    });
+    console.log('toggle');
+  }
 
+  onCreate(form: NgForm) {
+    const order = this.createOrderModel;
+    // prepare order object for saving
+    order.statusClass = true;
+    if ( order.status == 'pending') {
+      order.statusClass = false;
+    }
+    order.date = Date.now();
+    order.orderSum = 500;
+    order.orderId = this.totalOrders;
+
+    // order.products = [];
+    // .replace("'", '')
+    const temp = $('#products').val();
+    order.products = temp.map(str => str.match(/'\w*'/i)[0]);
+
+    // save to firebase
     this.orders.push(order);
 
+    // close modal
+    $('#create-form').modal('toggle');
+
+    // reset form
+    form.resetForm();
+    this.createOrderModel = new Order();
   }
 
-  getOrder(keyClient) {
-    let key = keyClient;
-
-    this.db.list('/orders').subscribe(snapshots => {
-
-      snapshots.forEach(snapshot => {
-        let currentKey = snapshot.$key;
-        console.log(currentKey,554);
-
-
-
-        if(key == currentKey) {
-          this.id = snapshot.$key;
-          this.clientName2 = snapshot.clientName;
-          this.status2 = snapshot.status;
-          this.paid2 = snapshot.paid;
-          this.products = snapshot.products;
-          this.quantity = snapshot.quantity;
-          this.priceMethod = snapshot.priceMethod;
-          this.notes = snapshot.notes;
-          this.ticketNumber = snapshot.ticketNumber;
-          //console.log(this.data);
-
-
-        }
-
-      });
-
+  onRead(id) {
+    this.db.object(`orders/${id}`).subscribe(snapshots => {
+      this.editOrderModel = snapshots;
+      $('#products-edit').chosen({disable_search_threshold: 10});
     });
-
-    console.log(key);
-    console.log("Выбрать клиента");
   }
 
-
-  onEditSubmit(){
-    let statusClass;
-    if(this.status2 == 'pending') {
-      statusClass = false;
-    } else {
-      statusClass = true;
+  onUpdate(form: NgForm) {
+    const order = this.editOrderModel;
+    // prepare order object for saving
+    order.statusClass = true;
+    if ( order.status == 'pending') {
+      order.statusClass = false;
     }
 
-    let order = {
-      clientName: this.clientName2,
-      products: this.products,
-      quantity: this.quantity,
-      paid: this.paid2,
-      priceMethod: this.priceMethod,
-      notes: this.notes,
-      ticketNumber: this.ticketNumber,
-      status: this.status2,
-      statusClass: statusClass,
-    }
+    this.orders.update(order.$key, order);
 
+    // close modal
+    $('#edit-form').modal('toggle');
 
-    this.orders.update(this.id, order);
-    this.router.navigate(['/orders']);
+    // reset form
+    form.resetForm();
+    this.editOrderModel = new Order();
   }
 }

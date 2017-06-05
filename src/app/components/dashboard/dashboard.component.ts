@@ -3,6 +3,7 @@ import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/databa
 import { FlotChartDirective } from '../../components/charts/flotChart';
 import { Cookie } from 'ng2-cookies';
 import { footable } from '../../app.helpers';
+import { LikePipe } from '../../pipes/LikePipe';
 
 declare var jQuery:any;
 declare var $: any;
@@ -12,9 +13,12 @@ declare var $: any;
   templateUrl: 'dashboard.template.html'
 })
 
-export class DashboardComponent implements OnDestroy, OnInit {
 
-  public nav:any;
+
+export class DashboardComponent implements OnDestroy, OnInit {
+  //inpu
+  searchOrder;
+  public nav: any;
   public todos: any;
   mainData;
   income;
@@ -50,15 +54,16 @@ export class DashboardComponent implements OnDestroy, OnInit {
     this.projects = db.list('/projects');
     this.mainData = db.object('/mainData').subscribe(client => {
 
-      //this.orders = client.orders;
+      // this.orders = client.orders;
       //this.income = client.income;
       this.visits = client.visits;
       this.userActivity = client.userActivity;
 
     });
-    console.log(this.orders,55);
+    console.log(this.orders, 55);
 
     this.ordersTable2 = db.list('/orders');
+    console.log(`orederTable2 ${this.ordersTable2}`);
     this.ordersTable = db.list('/orders').subscribe(snapshots => {
 
 
@@ -137,14 +142,11 @@ export class DashboardComponent implements OnDestroy, OnInit {
         this.incomePercent = this.sumCurrentMonth - this.sumLastMonth;
 
       });
-
-
-
-
-
-
     });
+  }
 
+  onSearchOrderClick(){
+    
   }
 
   public ngOnInit():any {

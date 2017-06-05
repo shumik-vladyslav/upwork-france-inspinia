@@ -36,32 +36,29 @@ export class ProfilComponent implements OnInit {
   @Input() hostUpload: string;
 
   /** Uploaded images server folder */
-  @Input() uploadFolder: string = "";
+  @Input() uploadFolder = '';
 
   constructor(
     public afAuth: AngularFireAuth,
     public db: AngularFireDatabase,
-    private router:Router,
-    private route:ActivatedRoute,
+    private router: Router,
+    private route: ActivatedRoute,
     private userService: UserService
   ) {
-
     this.userAf = this.afAuth.authState;
     this.users = db.list('/users');
-
-
   }
 
   ngOnInit() {
     this.id = this.route.snapshot.params['id'];
+    console.log(`this.id ${this.id}`);
     this.users = this.db.list('/users');
     this.user =  this.db.list('/users').subscribe(users => {
-
 
       let userId = JSON.parse(Cookie.getAll()['User']);
       users.forEach(snapshot => {
 
-        if(snapshot.email == userId.email){
+        if(snapshot.email == userId.email) {
           console.log(snapshot.name);
 
           this.id = snapshot.$key;
@@ -75,14 +72,10 @@ export class ProfilComponent implements OnInit {
         }
 
       });
-
-
     });
 
     this.obj = this.userService.getUser();
     console.log(this.obj.email);
-
-
   }
 
 

@@ -4,6 +4,7 @@ import { footable } from '../../app.helpers';
 import { summernote } from '../../app.helpers';
 import { slimscroll } from '../../app.helpers';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
+import {Subject} from 'rxjs/Subject';
 import {Router} from '@angular/router';
 
 declare var jQuery:any;
@@ -30,11 +31,34 @@ export class ClientsComponent {
 
   statusClass;
   clients: FirebaseListObservable<any[]>;
+  clientsOrders: FirebaseListObservable<any[]>;
+  clientsOrdersValue: any[];
+  filterOrdersSubject = new Subject();
+  filteredOrders: any;
+
   client;
 
-  constructor(public db: AngularFireDatabase, private router:Router) {
+  newClient:any = {status: 'Enabled'};
+  searchClient;
 
+  constructor(public db: AngularFireDatabase, private router: Router) {
     this.clients = db.list('/clients');
+    this.clientsOrders = db.list('/orders', {
+        query: {
+            // orderByChild: 'date',
+            //equalTo: this.filterOrdersSubject,
+        }
+      });
+      this.clientsOrders.subscribe(queriedItems => {
+        console.log('clientsOrders');
+        console.log(queriedItems);
+        this.clientsOrdersValue = queriedItems;
+      });
+  }
+
+  onOrdersHistory(clientName: string) {
+    console.log(`onOrdersHistory client:${clientName}`);
+    this.filterOrdersSubject.next(clientName);
   }
 
   public ngOnInit():any {
@@ -44,28 +68,39 @@ export class ClientsComponent {
 
   }
 
-  onAddSubmit(form: NgForm){
+  selectedClient: any = {};
+  selectedRowIdx = -1;
+  onRowClick(i,client){
+    console.log(`index =${i}`);
+    console.log(JSON.stringify(client));
+    this.selectedClient = client;
+    this.selectedRowIdx = i;
+    this.filteredOrders = this.clientsOrdersValue.filter(order => order.clientName == client.name);
+  }
+
+  onAddSubmit(form: NgForm) {
+    console.log("onAddSubmit");
     let statusClass;
-    if(this.status == 'Enabled') {
+    if (this.newClient.status == 'Enabled') {
       statusClass = true;
     } else {
       statusClass = false;
     }
     let client = {
-      name: this.name,
-      phone: this.phone,
-      email: this.email,
-      status: this.status,
-      address: "",
-      orderHistory: "",
-      statusClass: statusClass,
+      name: this.newClient.name,
+      phone: this.newClient.phone? this.newClient.phone: '',
+      email: this.newClient.email? this.newClient.email: '',
+      status: this.newClient.status,
+      address: '',
+      orderHistory: '',
+      statusClass: statusClass
     }
 
+    $('#create-form').modal('toggle');
     this.clients.push(client);
-
-    //setTimeout(() => {
-    //  this.router.navigate(['/chart']);
-    //}, 2000);
+    form.resetForm();
+    // form.controls.status.setValue('Enabled');
+    this.newClient = {status: 'Enabled'};
   }
 
   getClient(keyClient) {
@@ -75,10 +110,9 @@ export class ClientsComponent {
 
       snapshots.forEach(snapshot => {
         let currentKey = snapshot.$key;
-        console.log(currentKey,554);
+        console.log(currentKey, 554);
 
-
-        if(key == currentKey) {
+        if (key == currentKey) {
           this.id = snapshot.$key;
           this.name2 = snapshot.name;
           this.phone2 = snapshot.phone;
@@ -87,22 +121,24 @@ export class ClientsComponent {
           this.address = snapshot.address;
           this.orderHistory = snapshot.orderHistory;
           //console.log(this.data);
-          var markupStr = ''+this.orderHistory;
+          var markupStr = '' + this.orderHistory;
           $('.summernote').summernote('code', markupStr);
-          console.log(this.client.name);
-
-
+          console.log(`onOrdersHistory client:${snapshot.name}`);
+          this.filterOrdersSubject.next(snapshot.name);
+          //filter clients orders
+          this.filteredOrders = this.clientsOrdersValue.filter(order => order.clientName == snapshot.name);
+          console.log(`filteredOrders ${this.filteredOrders}`);
+          //
         }
-
       });
-
     });
 
     console.log(key);
     console.log("Выбрать клиента");
   }
 
-  onEditSubmit(){
+  onEditSubmit() {
+    console.log("onEditSubmit");
     let statusClass;
     if(this.status2 == 'Enabled') {
       statusClass = true;
@@ -123,8 +159,10 @@ export class ClientsComponent {
     //this.model.data = this.data;
     //console.log(this.model.data,44);
     console.log(markupStrIn,44);
+    $('#edit-form').modal('toggle');
     this.clients.update(this.id, client);
     this.router.navigate(['/clients']);
+
   }
 
 }

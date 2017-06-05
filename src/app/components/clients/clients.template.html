@@ -10,62 +10,97 @@
         <a>E-commerce</a>
       </li>
       <li class="active">
-        <strong>Product list</strong>
+        <strong>Clients list</strong>
       </li>
     </ol>
-  </div>
-  <div class="col-lg-2">
 
+  </div>
+  <div class="col-lg-2" >
+     <div class="text-center" style="float: right;margin-top: 30px;">
+      <a data-toggle="modal" class="btn btn-primary" href="#create-form">Create client</a>
+    </div>
   </div>
 </div>
 
+
 <div class="wrapper wrapper-content animated fadeInRight ecommerce">
-
-
-  <div class="ibox-content m-b-sm border-bottom">
-
-    <div class="ibox-content">
-      <div class="text-center">
-        <a data-toggle="modal" class="btn btn-primary" href="#modal-form">Create client</a>
-      </div>
-      <div id="modal-form" class="modal fade" aria-hidden="true">
+      <!--create dialog-->
+      <div id="create-form" class="modal fade" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Create client</h4>
+            </div>
             <div class="modal-body">
               <div class="row">
-                <form class="form-edit" #myForm="ngForm" novalidate (ngSubmit)="onAddSubmit(myForm)">
+                <!--<form class="form-edit" #myForm="ngForm" novalidate (ngSubmit)="onAddSubmit(myForm)">-->
+                <form #newClientForm="ngForm" novalidate (ngSubmit)="onAddSubmit(newClientForm)">
                   <div class="row">
                     <div class="col-sm-12">
                       <div class="form-group">
-                        <label class="control-label" for="product_name">Name</label>
-                        <input type="text" id="product_name" required pattern="^[a-zA-Z]+$" [(ngModel)]="name" name="name" value="" placeholder="Name" class="form-control">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" class="form-control"
+                              required minlength="4" maxlength="24" pattern="^[a-zA-Z]+$"
+                              name="name" [(ngModel)]="newClient.name"
+                              #name="ngModel" >
+
+                        <div *ngIf="name.errors && (name.dirty || name.touched)"
+                            class="alert alert-danger">
+                            <div [hidden]="!name.errors.required">
+                              Name is required
+                            </div>
+                            <div [hidden]="!name.errors.minlength">
+                              Name must be at least 4 characters long.
+                            </div>
+                            <div [hidden]="!name.errors.maxlength">
+                              Name cannot be more than 24 characters long.
+                            </div>
+                        </div>
                       </div>
                     </div>
+                    
                     <div class="col-sm-12">
                       <div class="form-group">
-                        <label class="control-label" for="price">Phone</label>
-                        <input type="text" id="price" required pattern="^\d{4}-\d{3}-\d{4}$" [(ngModel)]="phone" name="phone" value="" placeholder="Phone (format: xxxx-xxx-xxxx)" class="form-control">
+                        <label class="control-label" for="phone">Phone</label>
+                        <input type="text" id="phone" pattern="^\d{4}-\d{3}-\d{4}$" [(ngModel)]="newClient.phone" 
+                        name="phone" #phone="ngModel" placeholder="Phone (format: xxxx-xxx-xxxx)" class="form-control">
+                        <div *ngIf="phone.errors && (phone.dirty || phone.touched)"
+                            class="alert alert-danger">
+                            <div [hidden]="!phone.errors.pattern">
+                              Format missing
+                            </div>
+                        </div>
                       </div>
                     </div>
+
                     <div class="col-sm-12">
                       <div class="form-group">
-                        <label class="control-label" for="quantity">Email</label>
-                        <input type="email" pattern="[a-zA-Z_]+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}" required id="quantity" [(ngModel)]="email" name="email" value="" placeholder="Email" class="form-control">
+                        <label class="control-label" for="email">Email</label>
+                        <input type="email" pattern="[a-zA-Z_]+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}" id="email" #email="ngModel"
+                        [(ngModel)]="newClient.email" name="email" value="" placeholder="Email" class="form-control">
+                        <div *ngIf="email.errors && (email.dirty || email.touched)"
+                            class="alert alert-danger">
+                            <div [hidden]="!email.errors.pattern">
+                              Format is incorrect 
+                            </div>
+                        </div>
                       </div>
                     </div>
+                    
                     <div class="col-sm-12">
                       <div class="form-group">
                         <label class="control-label" for="status">Status</label>
-                        <select [(ngModel)]="status" name="status" id="status" class="form-control" placeholder="Status">
-                          <option value="Enabled" selected>Enabled</option>
+                        <select [(ngModel)]="newClient.status" name="status" id="status" class="form-control" placeholder="Status">
+                          <option value="Enabled">Enabled</option>
                           <option value="Disabled">Disabled</option>
                         </select>
                       </div>
                     </div>
+
                     <div class="col-sm-12">
                       <div class="form-group">
-                        <button type="submit" class="btn btn-success" [disabled]="myForm.invalid">Create client</button>
-
+                        <button type="button" (click)="onAddSubmit(newClientForm)" class="btn btn-success" [disabled]="newClientForm.invalid" >Create client</button>
                       </div>
                     </div>
                   </div>
@@ -75,49 +110,95 @@
           </div>
         </div>
       </div>
+      <!--end create dialog-->
 
-      <div id="modal-form2" class="modal fade" aria-hidden="true">
+      <!--edit dialog-->
+      <div id="edit-form" class="modal fade" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Edit client</h4>
+            </div>
             <div class="modal-body">
+              <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#home">Details</a></li>
+                <li (click)="onOrdersHistory(name2)"><a data-toggle="tab" href="#menu1">Orders history</a></li>
+              </ul>
+              <form class="form-edit" (submit)="onEditSubmit()">
+              <div class="tab-content">
+                
+            <div id="home" class="tab-pane fade in active">
               <div class="row">
-                <form class="form-edit" (submit)="onEditSubmit()">
-                  <fieldset class="form-horizontal">
-                    <div class="form-group"><label class="col-sm-2 control-label">Name:</label>
-                      <div class="col-sm-10"><input [(ngModel)]="name2"  name="name2" type="text" class="form-control" placeholder="Name"></div>
-                    </div>
-                    <div class="form-group"><label class="col-sm-2 control-label">Phone:</label>
-                      <div class="col-sm-10"><input [(ngModel)]="phone2" name="phone2" type="text" class="form-control" placeholder="Phone"></div>
-                    </div>
-                    <div class="form-group"><label class="col-sm-2 control-label">Email:</label>
-                      <div class="col-sm-10"><input [(ngModel)]="email2" name="email2" type="email" class="form-control" placeholder="Email"></div>
-                    </div>
-                    <div class="form-group"><label class="col-sm-2 control-label">Status:</label>
-                      <div class="col-sm-10">
-                        <select [(ngModel)]="status2" name="status2" id="status2" class="form-control" placeholder="Status">
-                          <option value="Enabled" selected>Enabled</option>
-                          <option value="Disabled">Disabled</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div class="form-group"><label class="col-sm-2 control-label">Address:</label>
-                      <div class="col-sm-10"><input [(ngModel)]="address" name="address" type="text" class="form-control" placeholder="Address"></div>
-                    </div>
-                    <div class="form-group"><label class="col-sm-2 control-label">Order history:</label>
-                      <div class="col-sm-10"><div class="summernote"></div></div>
-                    </div>
-                    <!--<ng2-summernote [(ngModel)]="data" height="500" ></ng2-summernote>-->
-                    <input type="submit" value="Edit client" class="btn btn-success">
-                  </fieldset>
-                </form>
+                <div class="col-sm-12">
+                  <div class="form-group">
+
+                  </div>
+                </div>
+                
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label class=" control-label" for="ename">Name:</label>
+                    <input index="ename" [(ngModel)]="name2"  name="name2" type="text" class="form-control" placeholder="Name">
+                  </div>
+                </div>
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label for="ephone" class=" control-label">Phone:</label>
+                    <input index="ephone" [(ngModel)]="phone2" name="phone2" type="text" class="form-control" placeholder="Phone">
+                  </div>
+                </div>
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label for="eemail" class=" control-label">Email:</label>
+                    <input index ="eemail" [(ngModel)]="email2" name="email2" type="email" class="form-control" placeholder="Email">
+                  </div>
+                </div>
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label for="estatus" class=" control-label">Status:</label>
+                    <select index="estatus" [(ngModel)]="status2" name="status2" id="status2" class="form-control" placeholder="Status">
+                      <option value="Enabled" selected>Enabled</option>
+                      <option value="Disabled">Disabled</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label for="eaddress" class=" control-label">Address:</label>
+                    <input index="eaddress" [(ngModel)]="address" name="address" type="text" class="form-control" placeholder="Address">
+                  </div>
+                </div>                                                                
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <button type="button" (click)="onEditSubmit()" class="btn btn-success">Save</button>  
+                  </div>
+                </div>
               </div>
+                </div>
+                <div id="menu1" class="tab-pane fade">
+                  <div class="row">
+                  <div class="col-sm-12">
+                    <div class="form-group">
+                      <label class=" control-label">Order history:</label>
+                        <ul>
+                          <li *ngFor="let order of filteredOrders">
+                            {{ order.date |  date }} {{ order.products }} {{order.status}}
+                          </li>
+                        </ul>
+                        <button type="button" (click)="onEditSubmit()" class="btn btn-success">Save</button>  
+                    </div>
+                  </div>
+                  </div>
+
+                </div>
+              </div>
+            </form>
             </div>
           </div>
         </div>
       </div>
-
-    </div>
-  </div>
+      <!--end edit dialog-->
 
   <div class="row">
     <div class="col-lg-8">
@@ -125,9 +206,9 @@
         <div class="ibox-content">
 
           <div class="input-group">
-            <input type="text" placeholder="Search client " class="input form-control">
+            <input type="text" [(ngModel)]="searchClient" placeholder="Search client " class="input form-control">
             <span class="input-group-btn">
-                    <button type="button" class="btn btn btn-primary"> <i class="fa fa-search"></i> Search</button>
+              <button type="button" class="btn btn btn-primary"> <i class="fa fa-search"></i> Search</button>
             </span>
           </div>
 
@@ -144,7 +225,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let client of clients | async">
+            <tr *ngFor="let client of clients | async | likefilter:searchClient;let i=index" (click)="onRowClick(i,client)" [ngClass]="{ 'selected-row' : i===selectedRowIdx }">
               <td>
                 {{client.name}}
               </td>
@@ -159,7 +240,7 @@
               </td>
               <td class="text-right">
                 <div class="btn-group">
-                  <a data-toggle="modal" class="btn btn-primary" (click)="getClient(client.$key)" href="#modal-form2">View client</a>
+                  <a data-toggle="modal" class="btn btn-primary" (click)="getClient(client.$key)" href="#edit-form">View client</a>
                 </div>
               </td>
             </tr>
@@ -172,7 +253,6 @@
             </tr>
             </tfoot>
           </table>
-
         </div>
       </div>
     </div>
@@ -181,7 +261,56 @@
 
         <div class="ibox-content">
           <div class="tab-content">
-            <div id="contact-1" class="tab-pane active">
+            <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group">
+
+                  </div>
+                </div>
+                
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label class=" control-label" for="ename">Name:</label>
+                    <input index="ename" value={{selectedClient.name}}  name="name2" type="text" class="form-control" placeholder="Name">
+                  </div>
+                </div>
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label for="ephone" class=" control-label">Phone:</label>
+                    <input index="ephone" value={{selectedClient.phone}} name="phone2" type="text" class="form-control" placeholder="Phone">
+                  </div>
+                </div>
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label for="eemail" class=" control-label">Email:</label>
+                    <input index ="eemail" value={{selectedClient.email}} name="email2" type="email" class="form-control" placeholder="Email">
+                  </div>
+                </div>
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label for="estatus" class=" control-label">Email:</label>
+                    <input index ="estatus" value={{selectedClient.status}} name="email2" type="email" class="form-control" placeholder="Email">
+                  </div>
+                </div>
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label for="eaddress" class=" control-label">Address:</label>
+                    <input index="eaddress" value={{selectedClient.address}} name="address" type="text" class="form-control" placeholder="Address">
+                  </div>
+                </div>
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label for="order-history" class=" control-label">Orders history:</label>
+                    <ul index="order-history">
+                      <li *ngFor="let order of filteredOrders">
+                        {{ order.date | date }} {{ order.products }} {{order.status}}
+                      </li>
+                    </ul> 
+                  </div>
+                </div>
+                                                               
+              </div>
+            <!--<div id="contact-1" class="tab-pane active">
               <div class="row m-b-lg">
                 <div class="col-lg-4 text-center">
                   <h2>Nicki Smith</h2>
@@ -958,7 +1087,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div>-->
           </div>
         </div>
       </div>

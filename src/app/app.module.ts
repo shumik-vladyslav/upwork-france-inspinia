@@ -38,6 +38,8 @@ import { IboxtoolsModule } from './components/common/iboxtools/iboxtools.module'
 import { PeityModule } from './components/charts/peity';
 import { SparklineModule } from './components/charts/sparkline';
 import { JVectorMapModule } from './components/map/jvectorMap';
+import { LikePipe } from './pipes/LikePipe';
+import { ApplyChosenPipe } from './pipes/ApplyChosenPipe';
 
 // App views
 import {DashboardsModule} from "./views/dashboards/dashboards.module";
@@ -48,12 +50,19 @@ import {LayoutsModule} from "./components/common/layouts/layouts.module";
 
 // Must export the config
 export const firebaseConfig = {
-  apiKey: "AIzaSyDV8ZIYD4c7rNFMdORcEFl-7TApLXZBxqE",
-  authDomain: "inspinia-58904.firebaseapp.com",
-  databaseURL: "https://inspinia-58904.firebaseio.com",
-  projectId: "inspinia-58904",
-  storageBucket: "inspinia-58904.appspot.com",
-  messagingSenderId: "157737978226"
+  // apiKey: "AIzaSyDV8ZIYD4c7rNFMdORcEFl-7TApLXZBxqE",
+  // authDomain: "inspinia-58904.firebaseapp.com",
+  // databaseURL: "https://inspinia-58904.firebaseio.com",
+  // projectId: "inspinia-58904",
+  // storageBucket: "inspinia-58904.appspot.com",
+  // messagingSenderId: "157737978226"
+
+  apiKey: "AIzaSyDbxiYt1lbq864KAWVTpmz_Qvw-AY3PTPo",
+  authDomain: "inspinia-admin.firebaseapp.com",
+  databaseURL: "https://inspinia-admin.firebaseio.com",
+  projectId: "inspinia-admin",
+  storageBucket: "inspinia-admin.appspot.com",
+  messagingSenderId: "372127658203"
 };
 
 @NgModule({
@@ -74,8 +83,9 @@ export const firebaseConfig = {
     ProjectsComponent,
     ProfilComponent,
     PaymentComponent,
-    MessagesComponent
-
+    MessagesComponent,
+    LikePipe,
+    ApplyChosenPipe
   ],
   imports: [
     BrowserModule,

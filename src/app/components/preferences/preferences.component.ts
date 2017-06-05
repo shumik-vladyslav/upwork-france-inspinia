@@ -45,6 +45,7 @@ export class PreferencesComponent implements OnInit {
 
   ngOnInit() {
     this.id = this.route.snapshot.params['id'];
+    console.log(`this.id ${this.id}`);
     this.users = this.db.list('/users');
     this.user = this.db.object('/users/'+this.id).subscribe(user => {
 

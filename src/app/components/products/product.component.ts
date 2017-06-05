@@ -27,21 +27,22 @@ export class ProductsComponent implements OnInit {
 
   products: FirebaseListObservable<any[]>;
   product;
+  searchProduct;
 
   constructor(public db: AngularFireDatabase, private router:Router) {
 
     this.products = db.list('/products');
   }
 
-  public ngOnInit():any {
+  public ngOnInit(): any {
     footable();
   }
 
   onAddSubmit(form: NgForm){
     let product = {
       name: this.name,
-      price: this.price,
-      quantity: this.quantity,
+      price: +this.price,
+      quantity: +this.quantity,
       description: "",
       category: "",
       tag: "",
@@ -87,8 +88,8 @@ export class ProductsComponent implements OnInit {
   onEditSubmit(){
     let product = {
       name: this.name2,
-      price: this.price2,
-      quantity: this.quantity2,
+      price: +this.price2,
+      quantity: +this.quantity2,
       description: this.description,
       category: this.category,
       tag: this.tag,
@@ -97,5 +98,8 @@ export class ProductsComponent implements OnInit {
 
     this.products.update(this.id, product);
     this.router.navigate(['/products']);
+  }
+  toNumber(str:string){
+    return +str;
   }
 }
